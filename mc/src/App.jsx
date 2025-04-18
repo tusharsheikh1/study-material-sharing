@@ -19,7 +19,7 @@ import WaitingApproval from './pages/WaitingApproval';
 import Leaderboard from './pages/Leaderboard';
 
 // 👇 Developer Profile Page
-import DeveloperProfile from './pages/Developerprofile';
+import DeveloperProfile from './pages/DeveloperProfile';
 
 // Admin
 import AdminRoute from './components/AdminRoute';
