@@ -19,10 +19,10 @@ dotenv.config(); // Load environment variables from .env file
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ✅ Open CORS for all environments (localhost + production)
+// ✅ CORRECT CORS CONFIGURATION
 app.use(cors({
-  origin: true,           // Reflect request origin
-  credentials: true,      // Allow cookies, Authorization headers, etc.
+  origin: true,        // Dynamically allows requests from any origin
+  credentials: true,   // Allows cookies and Authorization headers
 }));
 
 app.use(express.json()); // Parse JSON request bodies
@@ -42,17 +42,17 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "media", // Folder name in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg", "gif", "pdf"], // Added "pdf" to allowed formats
+    allowed_formats: ["jpg", "png", "jpeg", "gif", "pdf"], // Allowed formats
   },
 });
 
 const upload = multer({ storage }); // Configure Multer with Cloudinary storage
 
 // Routes
-app.use("/api/auth", authRoutes); // Mount authentication routes
-app.use("/api/admin", adminRoutes); // Mount admin routes
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use('/api/students', studentRoutes);
-app.use("/api/logos", logosRoutes); // Mount logos routes
+app.use("/api/logos", logosRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/materials', materialRoutes);
@@ -60,13 +60,13 @@ app.use('/api/materials', materialRoutes);
 // Media upload route
 app.post("/api/media/upload", upload.single("file"), (req, res) => {
   try {
-    const file = req.file; // Uploaded file information
+    const file = req.file;
     if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
     res.status(200).json({
       message: "File uploaded successfully",
-      url: file.path, // Cloudinary URL of the uploaded file
+      url: file.path,
     });
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -77,8 +77,8 @@ app.post("/api/media/upload", upload.single("file"), (req, res) => {
 // New route to fetch total number of customers
 app.get("/api/customers/count", async (req, res) => {
   try {
-    const totalCustomers = await User.countDocuments(); // Count all customers in the 'User' collection
-    res.json({ totalCustomers }); // Return the count as a JSON response
+    const totalCustomers = await User.countDocuments();
+    res.json({ totalCustomers });
   } catch (err) {
     console.error("Error fetching customer count:", err);
     res.status(500).json({ message: "Error fetching customer count", error: err });
