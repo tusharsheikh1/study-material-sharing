@@ -1,11 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api"; // ✅ centralized axios instance
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ForgotPassword = () => {
-  const [useEmail, setUseEmail] = useState(true); // Toggle between email and phone
+  const [useEmail, setUseEmail] = useState(true);
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ const ForgotPassword = () => {
         return;
       }
 
-      await axios.post("http://localhost:5000/api/auth/send-otp", {
+      await api.post("/auth/send-otp", {
         email: useEmail ? email : undefined,
         phoneNumber: !useEmail ? phoneNumber : undefined,
       });
@@ -35,7 +35,7 @@ const ForgotPassword = () => {
       toast.success("OTP sent successfully! Redirecting...");
       setTimeout(() => {
         navigate("/reset-password", { state: { email, phoneNumber } });
-      }, 2000); // Redirect after 2 seconds
+      }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Error sending OTP");
       toast.error(err.response?.data?.message || "Error sending OTP");

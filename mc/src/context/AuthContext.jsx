@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api'; // ✅ centralized axios instance
 
 const AuthContext = createContext();
 
@@ -13,9 +13,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const { data } = await axios.get('http://localhost:5000/api/auth/me', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const { data } = await api.get('/auth/me');
           setUser(data);
           localStorage.setItem('user', JSON.stringify(data));
         } catch (error) {
@@ -32,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async ({ fullName, email, password, phoneNumber, role, semester, batch }) => {
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await api.post('/auth/register', {
         fullName,
         email,
         password,
@@ -50,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (emailOrPhone, password) => {
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', {
+      const { data } = await api.post('/auth/login', {
         emailOrPhone,
         password,
       });
@@ -66,7 +64,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyOtp = async ({ email, phoneNumber, otp }) => {
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/verify-otp', {
+      const { data } = await api.post('/auth/verify-otp', {
         email,
         phoneNumber,
         otp,
@@ -83,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   const sendOtp = async ({ email, phoneNumber }) => {
     try {
-      await axios.post('http://localhost:5000/api/auth/send-otp', {
+      await api.post('/auth/send-otp', {
         email,
         phoneNumber,
       });
@@ -96,7 +94,7 @@ export const AuthProvider = ({ children }) => {
 
   const resetPassword = async ({ email, phoneNumber, otp, newPassword }) => {
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      const { data } = await api.post('/auth/reset-password', {
         email,
         phoneNumber,
         otp,
@@ -130,7 +128,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        setUser, // ✅ added
+        setUser,
         login,
         register,
         verifyOtp,

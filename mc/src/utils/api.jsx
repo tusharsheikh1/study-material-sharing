@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // Dynamic backend URL from .env
+  baseURL: 'https://study-material-backend-7lpw.onrender.com/api', // Direct backend URL
 });
 
 // Add a request interceptor to include the token in headers

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,6 +14,12 @@ const ResetPassword = () => {
   const location = useLocation();
   const email = location.state?.email;
   const phoneNumber = location.state?.phoneNumber;
+
+  useEffect(() => {
+    if (!email && !phoneNumber) {
+      navigate("/forgot-password");
+    }
+  }, [email, phoneNumber, navigate]);
 
   useEffect(() => {
     if (isResendDisabled) {
@@ -33,13 +39,13 @@ const ResetPassword = () => {
 
   const handleResendOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/send-otp", {
+      await api.post("/auth/send-otp", {
         email,
         phoneNumber,
       });
       toast.success("OTP resent successfully!");
       setIsResendDisabled(true);
-      setTimer(60); // Reset the timer
+      setTimer(60);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to resend OTP");
     }
@@ -48,49 +54,38 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/reset-password",
-        {
-          email,
-          phoneNumber,
-          otp,
-          newPassword,
-        }
-      );
+      const { data } = await api.post("/auth/reset-password", {
+        email,
+        phoneNumber,
+        otp,
+        newPassword,
+      });
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       toast.success("Password reset successfully! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 3000); // Redirect after 3 seconds
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to reset password");
       toast.error(err.response?.data?.message || "Failed to reset password");
     }
   };
 
-  if (!email && !phoneNumber) {
-    navigate("/forgot-password");
-    return null;
-  }
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-100">
       <ToastContainer />
       <div className="w-full max-w-md p-8 bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-lg">
         <h2 className="text-4xl font-extrabold text-center text-gray-800">
           Reset Password
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter the OTP sent to your email or phone number and reset your password.
+          Enter the OTP sent to your email or phone number and set a new password.
         </p>
         {error && (
           <p className="mt-4 text-sm text-center text-red-500">{error}</p>
         )}
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div>
-            <label
-              htmlFor="otp"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
               OTP
             </label>
             <input
@@ -105,10 +100,7 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="newPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
               New Password
             </label>
             <input
@@ -124,7 +116,7 @@ const ResetPassword = () => {
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Reset Password
           </button>

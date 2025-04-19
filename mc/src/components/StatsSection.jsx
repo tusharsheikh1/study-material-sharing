@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api"; // ✅ Use this instead of axios
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
@@ -69,7 +69,7 @@ const StatsSection = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get("/api/materials/stats");
+        const res = await api.get("/materials/stats"); // ✅ Use centralized API
         setStats(res.data);
       } catch (err) {
         console.error("Stats fetch failed", err);

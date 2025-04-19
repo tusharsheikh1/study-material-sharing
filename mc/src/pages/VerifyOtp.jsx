@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api"; // ✅ centralized axios instance
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,16 +12,13 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract email and phoneNumber from the location state (passed from registration)
   const email = location.state?.email;
   const phoneNumber = location.state?.phoneNumber;
 
   useEffect(() => {
     if (!email && !phoneNumber) {
-      // Redirect to registration if neither email nor phone number is provided
       navigate("/register");
     } else {
-      // Notify the user that the OTP has been sent
       toast.success("OTP sent successfully! Please check your email or phone.");
     }
   }, [email, phoneNumber, navigate]);
@@ -46,17 +43,16 @@ const VerifyOtp = () => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        { email, phoneNumber, otp }
-      );
-      // Redirect to home page after successful verification
+      const response = await api.post("/auth/verify-otp", {
+        email,
+        phoneNumber,
+        otp,
+      });
       if (response.data.token) {
-        // Save the token to localStorage for session persistence
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         toast.success("OTP verified successfully! Redirecting...");
-        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
+        setTimeout(() => navigate("/"), 2000);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Verification failed");
@@ -67,13 +63,13 @@ const VerifyOtp = () => {
   // Handle Resend OTP
   const handleResendOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/send-otp", {
+      await api.post("/auth/send-otp", {
         email,
         phoneNumber,
       });
       toast.success("OTP resent successfully!");
       setIsResendDisabled(true);
-      setTimer(60); // Reset the timer
+      setTimer(60);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to resend OTP");
     }
