@@ -22,7 +22,7 @@ const port = process.env.PORT || 5000;
 // ✅ Updated CORS Configuration for Vercel and Localhost
 const corsOptions = {
   origin: [
-    //'https://mktonlinedesk.vercel.app', // production frontend
+    'https://mktonlinedesk.vercel.app', // production frontend
     //'http://localhost:5173',             // Vite dev server
     //'http://localhost:3000'              // React default port
   ],
