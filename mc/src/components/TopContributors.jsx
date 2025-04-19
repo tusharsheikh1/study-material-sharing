@@ -40,17 +40,17 @@ const TopContributors = () => {
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border mt-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">🏆 Top Class Note Uploaders</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 mt-6">
+      <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">🏆 Top Class Note Uploaders</h2>
       {contributors.length === 0 ? (
-        <p className="text-sm text-gray-500">No class notes uploaded yet.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-300">No class notes uploaded yet.</p>
       ) : (
         <ol className="space-y-2 list-decimal list-inside">
-          {contributors.map(({ user, count }, idx) => (
-            <li key={user._id} className="text-gray-800">
+          {contributors.map(({ user, count }) => (
+            <li key={user._id} className="text-gray-800 dark:text-gray-200">
               <span className="font-medium">{user.fullName}</span>{' '}
-              <span className="text-sm text-gray-500">({user.email})</span> —{' '}
-              <span className="font-semibold text-blue-600">{count}</span> notes
+              <span className="text-sm text-gray-500 dark:text-gray-400">({user.email})</span> —{' '}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">{count}</span> notes
             </li>
           ))}
         </ol>

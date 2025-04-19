@@ -43,25 +43,27 @@ const UserApproval = () => {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">🚦 Pending User Approvals</h1>
+    <div className="p-6 max-w-5xl mx-auto text-gray-800 dark:text-gray-100">
+      <h1 className="text-2xl font-bold mb-4">🚦 Pending User Approvals</h1>
 
       {loading ? (
-        <p className="text-center text-gray-500">Loading users...</p>
+        <p className="text-center text-gray-500 dark:text-gray-300">Loading users...</p>
       ) : users.length === 0 ? (
-        <p className="text-center text-green-500">✅ No pending approvals.</p>
+        <p className="text-center text-green-500 dark:text-green-400">✅ No pending approvals.</p>
       ) : (
         <div className="space-y-4">
           {users.map((user) => (
             <div
               key={user._id}
-              className="bg-white rounded-xl border border-gray-200 shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center"
             >
               <div>
-                <p className="font-semibold text-lg text-gray-800">{user.fullName}</p>
-                <p className="text-sm text-gray-600">{user.email}</p>
-                <p className="text-sm text-gray-600 capitalize">Role: {user.role}</p>
-                <p className="text-sm text-gray-500">Semester: {user.semester} | Batch: {user.batch}</p>
+                <p className="font-semibold text-lg text-gray-800 dark:text-white">{user.fullName}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">Role: {user.role}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Semester: {user.semester} | Batch: {user.batch}
+                </p>
               </div>
 
               <div className="flex gap-3 mt-4 md:mt-0">

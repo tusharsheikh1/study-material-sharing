@@ -32,14 +32,14 @@ const MaterialsPerSemesterChart = () => {
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">📊 Materials Per Semester</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow border border-gray-200 dark:border-gray-700">
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">📊 Materials Per Semester</h2>
       {data.length === 0 ? (
-        <p className="text-sm text-gray-500">No data available</p>
+        <p className="text-sm text-gray-500 dark:text-gray-300">No data available</p>
       ) : (
         <ul className="space-y-2">
           {data.map((item, index) => (
-            <li key={index} className="text-sm text-gray-700">
+            <li key={index} className="text-sm text-gray-700 dark:text-gray-200">
               {item.semester}: <strong>{item.count}</strong> materials
             </li>
           ))}

@@ -49,10 +49,10 @@ const MaterialTypeChart = () => {
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border mt-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">📂 Materials by Type</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 mt-6">
+      <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">📂 Materials by Type</h2>
       {data.length === 0 ? (
-        <p className="text-gray-500 text-sm">No materials found</p>
+        <p className="text-gray-500 dark:text-gray-300 text-sm">No materials found</p>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -70,8 +70,21 @@ const MaterialTypeChart = () => {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
-            <Legend layout="horizontal" align="center" verticalAlign="bottom" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#1f2937',
+                borderColor: '#4b5563',
+                color: '#f3f4f6',
+              }}
+              wrapperStyle={{ zIndex: 50 }}
+              labelStyle={{ color: '#9ca3af' }}
+            />
+            <Legend
+              layout="horizontal"
+              align="center"
+              verticalAlign="bottom"
+              wrapperStyle={{ color: 'inherit' }}
+            />
           </PieChart>
         </ResponsiveContainer>
       )}

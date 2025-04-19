@@ -35,7 +35,6 @@ const AdminSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  // Sidebar menu items with updated role logic
   const menuItems = [
     { name: 'Dashboard', icon: <FiHome />, path: '/admin/dashboard', roles: ['admin', 'faculty', 'cr'] },
     { name: 'User Approvals', icon: <FiClipboard />, path: '/admin/approvals', roles: ['admin'] },
@@ -57,7 +56,7 @@ const AdminSidebar = () => {
     <aside
       className={`${
         isOpen ? 'w-64' : 'w-20'
-      } bg-white text-gray-900 h-screen transition-all duration-300 sticky top-0 flex flex-col shadow-lg`}
+      } bg-white dark:bg-gray-900 text-gray-900 dark:text-white h-screen transition-all duration-300 sticky top-0 flex flex-col shadow-lg`}
     >
       <div className="flex items-center justify-between px-6 py-6">
         {isOpen && (
@@ -67,7 +66,7 @@ const AdminSidebar = () => {
             className="h-12 w-auto object-contain"
           />
         )}
-        <button onClick={toggleSidebar} className="text-gray-700 hover:text-gray-500 focus:outline-none">
+        <button onClick={toggleSidebar} className="text-gray-700 dark:text-gray-300 hover:text-gray-500 focus:outline-none">
           {isOpen ? <FiChevronLeft size={24} /> : <FiChevronRight size={24} />}
         </button>
       </div>
@@ -80,7 +79,7 @@ const AdminSidebar = () => {
             <li key={item.name}>
               <button
                 onClick={() => setSettingsOpen(!settingsOpen)}
-                className="flex items-center gap-4 px-4 py-3 mx-2 rounded-lg hover:bg-gray-100 hover:text-blue-600 text-gray-700 w-full text-left"
+                className="flex items-center gap-4 px-4 py-3 mx-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-300 w-full text-left"
               >
                 <span className="text-xl">{item.icon}</span>
                 {isOpen && <span className="text-md font-medium">{item.name}</span>}
@@ -94,8 +93,8 @@ const AdminSidebar = () => {
                         className={({ isActive }) =>
                           `flex items-center gap-4 px-4 py-2 rounded-lg transition duration-200 ease-in-out ${
                             isActive
-                              ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600'
-                              : 'hover:bg-gray-100 hover:text-blue-600 text-gray-700'
+                              ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 dark:from-blue-900 dark:to-blue-800 dark:text-white'
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-300'
                           }`
                         }
                       >
@@ -113,8 +112,8 @@ const AdminSidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-4 px-4 py-3 mx-2 rounded-lg transition duration-200 ease-in-out ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600'
-                      : 'hover:bg-gray-100 hover:text-blue-600 text-gray-700'
+                      ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 dark:from-blue-900 dark:to-blue-800 dark:text-white'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 text-gray-700 dark:text-gray-300'
                   }`
                 }
                 title={!isOpen ? item.name : ''}
@@ -127,7 +126,7 @@ const AdminSidebar = () => {
         })}
       </ul>
 
-      <div className="p-4 text-center text-xs text-gray-500 mt-auto">
+      <div className="p-4 text-center text-xs text-gray-500 dark:text-gray-400 mt-auto">
         {isOpen ? 'Admin Panel © 2025' : '©'}
       </div>
     </aside>

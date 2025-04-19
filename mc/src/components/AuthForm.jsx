@@ -4,6 +4,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContext from "../context/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { AiOutlineCheckCircle } from "react-icons/ai";
+import { ImSpinner8 } from "react-icons/im";
 import api from "../utils/api";
 
 const AuthForm = ({ type }) => {
@@ -24,6 +26,8 @@ const AuthForm = ({ type }) => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const { login, register, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -51,6 +55,8 @@ const AuthForm = ({ type }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setSuccess(false);
     try {
       if (type === "login") {
         const loggedIn = await login(formData.emailOrPhone, formData.password);
@@ -101,6 +107,7 @@ const AuthForm = ({ type }) => {
 
         if (success) {
           toast.success("Registration successful! Please verify your OTP.");
+          setSuccess(true);
           navigate("/verify-otp", {
             state: {
               email: formData.email,
@@ -112,6 +119,8 @@ const AuthForm = ({ type }) => {
     } catch (err) {
       setError(err.message);
       toast.error(err.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,11 +144,16 @@ const AuthForm = ({ type }) => {
             ? "Sign in to continue to your account."
             : "Join us and start your journey today!"}
         </p>
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-500">{error}</p>
+
+        {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
+        {success && (
+          <div className="flex justify-center mt-4 animate-bounce text-green-500">
+            <AiOutlineCheckCircle size={36} />
+          </div>
         )}
+
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          {type === "register" && (
+          {type !== "login" && (
             <>
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -151,113 +165,43 @@ const AuthForm = ({ type }) => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  placeholder="আপনার নাম লিখুন"
                   required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
                 />
               </div>
 
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Role
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Email
                 </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Role</option>
-                  <option value="student">Student</option>
-                  <option value="cr">CR (Class Representative)</option>
-                  <option value="faculty">Faculty / Teacher</option>
-                </select>
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                />
               </div>
             </>
           )}
 
-          <div>
-            <label htmlFor={type === "login" ? "emailOrPhone" : "email"} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              {type === "login" ? "Email or Phone Number" : "Email Address"}
-            </label>
-            <input
-              type={type === "login" ? "text" : "email"}
-              id={type === "login" ? "emailOrPhone" : "email"}
-              name={type === "login" ? "emailOrPhone" : "email"}
-              value={type === "login" ? formData.emailOrPhone : formData.email}
-              onChange={handleChange}
-              placeholder={type === "login" ? "Enter your email or phone number" : "আপনার ইমেইল লিখুন"}
-              required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {type === "register" && (
-            <>
-              <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  placeholder="আপনার ফোন নম্বর লিখুন"
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {["student", "cr"].includes(formData.role) && (
-                <>
-                  <div>
-                    <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Semester
-                    </label>
-                    <select
-                      id="semester"
-                      name="semester"
-                      value={formData.semester}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    >
-                      <option value="">Select Semester</option>
-                      {[...Array(8)].map((_, i) => (
-                        <option key={i + 1} value={i + 1}>
-                          Semester {i + 1}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Batch
-                    </label>
-                    <select
-                      id="batch"
-                      name="batch"
-                      value={formData.batch}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    >
-                      <option value="">Select Batch</option>
-                      {batchOptions.map((batch) => (
-                        <option key={batch} value={batch}>
-                          Batch {batch}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
-            </>
+          {type === "login" && (
+            <div>
+              <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Email or Phone
+              </label>
+              <input
+                type="text"
+                id="emailOrPhone"
+                name="emailOrPhone"
+                value={formData.emailOrPhone}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+              />
+            </div>
           )}
 
           <div className="relative">
@@ -270,9 +214,8 @@ const AuthForm = ({ type }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder={type === "login" ? "Enter your password" : "আপনার পাসওয়ার্ড লিখুন"}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
             />
             <button
               type="button"
@@ -283,10 +226,90 @@ const AuthForm = ({ type }) => {
             </button>
           </div>
 
+          {type !== "login" && (
+            <>
+              <div>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Role
+                  </label>
+                  <select
+                    name="role"
+                    id="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  >
+                    <option value="">Select Role</option>
+                    <option value="student">Student</option>
+                    <option value="cr">CR</option>
+                    <option value="faculty">Faculty</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Semester
+                  </label>
+                  <input
+                    type="number"
+                    name="semester"
+                    id="semester"
+                    value={formData.semester}
+                    onChange={handleChange}
+                    required
+                    min={1}
+                    max={12}
+                    className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Batch
+                </label>
+                <select
+                  id="batch"
+                  name="batch"
+                  value={formData.batch}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                >
+                  <option value="">Select Batch</option>
+                  {batchOptions.map((b) => (
+                    <option key={b} value={b}>
+                      Batch {b}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
           <button
             type="submit"
-            className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+            {loading && <ImSpinner8 className="animate-spin text-lg" />}
             {type === "login" ? "Sign In" : "Sign Up"}
           </button>
 
