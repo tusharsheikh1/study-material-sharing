@@ -1,12 +1,13 @@
+// 1️⃣ AuthForm.jsx (Main Component)
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthContext from "../context/AuthContext";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { ImSpinner8 } from "react-icons/im";
 import api from "../utils/api";
+import AuthFormFields from "./AuthFormFields";
 
 const AuthForm = ({ type }) => {
   const initialState =
@@ -152,175 +153,16 @@ const AuthForm = ({ type }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          {type !== "login" && (
-            <>
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                />
-              </div>
-            </>
-          )}
-
-          {type === "login" && (
-            <div>
-              <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Email or Phone
-              </label>
-              <input
-                type="text"
-                id="emailOrPhone"
-                name="emailOrPhone"
-                value={formData.emailOrPhone}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-              />
-            </div>
-          )}
-
-          <div className="relative">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center justify-center text-gray-500 hover:text-blue-500 transition duration-200"
-            >
-              {showPassword ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
-            </button>
-          </div>
-
-          {type !== "login" && (
-            <>
-              <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Role
-                  </label>
-                  <select
-                    name="role"
-                    id="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                  >
-                    <option value="">Select Role</option>
-                    <option value="student">Student</option>
-                    <option value="cr">CR</option>
-                    <option value="faculty">Faculty</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Semester
-                  </label>
-                  <input
-                    type="number"
-                    name="semester"
-                    id="semester"
-                    value={formData.semester}
-                    onChange={handleChange}
-                    required
-                    min={1}
-                    max={12}
-                    className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Batch
-                </label>
-                <select
-                  id="batch"
-                  name="batch"
-                  value={formData.batch}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-                >
-                  <option value="">Select Batch</option>
-                  {batchOptions.map((b) => (
-                    <option key={b} value={b}>
-                      Batch {b}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {loading && <ImSpinner8 className="animate-spin text-lg" />}
-            {type === "login" ? "Sign In" : "Sign Up"}
-          </button>
-
-          {type === "login" && (
-            <div className="text-center text-sm mt-4">
-              <a href="/forgot-password" className="text-blue-500 hover:underline">
-                Forgot Password?
-              </a>
-            </div>
-          )}
-        </form>
+        <AuthFormFields
+          type={type}
+          handleSubmit={handleSubmit}
+          formData={formData}
+          handleChange={handleChange}
+          showPassword={showPassword}
+          setShowPassword={setShowPassword}
+          loading={loading}
+          batchOptions={batchOptions}
+        />
 
         <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
           {type === "login" ? (

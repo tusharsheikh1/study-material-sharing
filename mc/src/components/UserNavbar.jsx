@@ -1,7 +1,7 @@
 import { useContext, useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiUser, FiLogOut, FiLock, FiHome } from 'react-icons/fi';
 import AuthContext from '../context/AuthContext';
-import { FiUser, FiLogOut, FiLock } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
 import ChangePasswordModal from './ChangePasswordModal'; // Make sure this component exists
 
 const UserNavbar = () => {
@@ -31,9 +31,14 @@ const UserNavbar = () => {
 
   return (
     <header className="w-full h-16 bg-white/90 backdrop-blur-sm border-b shadow-sm flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-50">
-      <h1 className="text-lg sm:text-xl font-bold tracking-tight text-blue-600">
-        Study Portal
-      </h1>
+      <div className="flex items-center gap-3">
+        <Link to="/">
+          <FiHome className="text-blue-600 text-xl hover:scale-110 transition" />
+        </Link>
+        <h1 className="text-lg sm:text-xl font-bold tracking-tight text-blue-600">
+          Study Portal
+        </h1>
+      </div>
 
       <div className="relative" ref={dropdownRef}>
         <div
