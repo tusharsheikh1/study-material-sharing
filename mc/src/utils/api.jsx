@@ -1,16 +1,20 @@
 import axios from 'axios';
 
-// ✅ Dynamically choose backend based on environment
+// ✅ Automatically detect base URL depending on environment
 const getBaseURL = () => {
   const hostname = window.location.hostname;
+
   if (hostname === 'localhost') {
-    //return 'http://localhost:5000/api'; // Local backend
+    return 'http://localhost:5000/api'; // Local backend
   }
-  return 'https://study-material-backend-7lpw.onrender.com/api'; // Production backend
+
+  // Default to production backend
+  return 'https://study-material-backend-7lpw.onrender.com/api';
 };
 
 const api = axios.create({
   baseURL: getBaseURL(),
+  withCredentials: true, // ✅ Required for sending cookies or auth headers
 });
 
 // Add a request interceptor to include the token in headers
@@ -37,7 +41,7 @@ api.interceptors.response.use(
   }
 );
 
-// Customer Management API calls
+// ✅ API functions
 export const getCustomers = async (params) => {
   return await api.get('/customers', { params });
 };

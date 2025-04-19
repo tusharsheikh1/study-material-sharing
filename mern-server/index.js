@@ -19,17 +19,12 @@ dotenv.config(); // Load environment variables from .env file
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ✅ Updated CORS Configuration for Vercel and Localhost
-const corsOptions = {
-  origin: [
-    'https://mktonlinedesk.vercel.app', // production frontend
-    //'http://localhost:5173',             // Vite dev server
-    //'http://localhost:3000'              // React default port
-  ],
-  credentials: true,
-};
+// ✅ Open CORS for all environments (localhost + production)
+app.use(cors({
+  origin: true,           // Reflect request origin
+  credentials: true,      // Allow cookies, Authorization headers, etc.
+}));
 
-app.use(cors(corsOptions)); // Enable CORS with options
 app.use(express.json()); // Parse JSON request bodies
 
 // Connect to MongoDB
@@ -37,27 +32,27 @@ connectDB();
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Your Cloudinary cloud name
+  api_key: process.env.CLOUDINARY_API_KEY,       // Your Cloudinary API key
+  api_secret: process.env.CLOUDINARY_API_SECRET, // Your Cloudinary API secret
 });
 
 // Multer-Cloudinary storage configuration
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "media",
-    allowed_formats: ["jpg", "png", "jpeg", "gif", "pdf"],
+    folder: "media", // Folder name in Cloudinary
+    allowed_formats: ["jpg", "png", "jpeg", "gif", "pdf"], // Added "pdf" to allowed formats
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage }); // Configure Multer with Cloudinary storage
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes); // Mount authentication routes
+app.use("/api/admin", adminRoutes); // Mount admin routes
 app.use('/api/students', studentRoutes);
-app.use("/api/logos", logosRoutes);
+app.use("/api/logos", logosRoutes); // Mount logos routes
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/materials', materialRoutes);
@@ -65,13 +60,13 @@ app.use('/api/materials', materialRoutes);
 // Media upload route
 app.post("/api/media/upload", upload.single("file"), (req, res) => {
   try {
-    const file = req.file;
+    const file = req.file; // Uploaded file information
     if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
     res.status(200).json({
       message: "File uploaded successfully",
-      url: file.path,
+      url: file.path, // Cloudinary URL of the uploaded file
     });
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -82,8 +77,8 @@ app.post("/api/media/upload", upload.single("file"), (req, res) => {
 // New route to fetch total number of customers
 app.get("/api/customers/count", async (req, res) => {
   try {
-    const totalCustomers = await User.countDocuments();
-    res.json({ totalCustomers });
+    const totalCustomers = await User.countDocuments(); // Count all customers in the 'User' collection
+    res.json({ totalCustomers }); // Return the count as a JSON response
   } catch (err) {
     console.error("Error fetching customer count:", err);
     res.status(500).json({ message: "Error fetching customer count", error: err });
