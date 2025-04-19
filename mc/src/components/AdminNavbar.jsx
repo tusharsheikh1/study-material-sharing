@@ -1,5 +1,6 @@
 import { useContext, useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { AiFillHome } from 'react-icons/ai'; // <== Home icon from react-icons
 import AuthContext from '../context/AuthContext';
 
 const AdminNavbar = () => {
@@ -37,17 +38,17 @@ const AdminNavbar = () => {
   return (
     <nav className="bg-white text-blue-600 py-3 shadow-lg sticky top-0 z-50">
       <div className="max-w-6xl mx-auto flex justify-between items-center px-4">
-        {/* Search Bar */}
-        <div className="flex-1 max-w-md mx-auto">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        {/* Home Icon Route */}
+        <Link
+          to="/"
+          className="p-2 rounded-full hover:bg-blue-100 transition"
+          title="Go to Home"
+        >
+          <AiFillHome className="w-6 h-6 text-blue-600" />
+        </Link>
 
         {/* Right section */}
-        <div className="relative flex items-center ml-4" ref={dropdownRef}>
+        <div className="relative flex items-center" ref={dropdownRef}>
           {/* Avatar Button */}
           <button
             className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-full shadow hover:scale-105 transition"

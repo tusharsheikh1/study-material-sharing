@@ -7,7 +7,6 @@ import {
   FiUsers,
   FiSettings,
   FiUser,
-  FiUploadCloud,
   FiBook,
   FiClipboard,
 } from 'react-icons/fi';
@@ -43,7 +42,6 @@ const AdminSidebar = () => {
     { name: 'Role Assignment', icon: <FiUser />, path: '/admin/roles', roles: ['admin'] },
     { name: 'Course Manager', icon: <FiBook />, path: '/admin/courses', roles: ['admin'] },
     { name: 'All Materials', icon: <FiClipboard />, path: '/admin/materials', roles: ['admin'] },
-    { name: 'Media Upload', icon: <FiUploadCloud />, path: '/admin/media-upload', roles: ['admin'] },
     {
       name: 'Settings',
       icon: <FiSettings />,
