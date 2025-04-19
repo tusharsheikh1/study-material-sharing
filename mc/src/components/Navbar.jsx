@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,14 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isDark, setIsDark] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  // Check login
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    setIsLoggedIn(!!userData);
+  }, []);
 
   // Set logo
   useEffect(() => {
@@ -63,6 +71,10 @@ const Navbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const goToDashboard = () => {
+    navigate("/user/dashboard");
+  };
+
   return (
     <>
       {/* Scroll Progress */}
@@ -105,15 +117,27 @@ const Navbar = () => {
             >
               {isDark ? <FiSun className="text-xl text-yellow-400" /> : <FiMoon className="text-xl text-gray-800" />}
             </button>
-            <Link to="/login" className="text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">
-              Sign In
-            </Link>
-            <Link
-              to="/register"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transform transition-all"
-            >
-              Get Started
-            </Link>
+
+            {isLoggedIn ? (
+              <button
+                onClick={goToDashboard}
+                className="bg-green-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transform transition-all"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <Link to="/login" className="text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transform transition-all"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Toggle */}
@@ -142,13 +166,27 @@ const Navbar = () => {
               <Link to="/staff" className="block hover:text-blue-600 dark:hover:text-blue-400">Staff</Link>
               <Link to="/about" className="block hover:text-blue-600 dark:hover:text-blue-400">About Us</Link>
               <hr className="my-2 border-gray-300 dark:border-gray-700" />
-              <Link to="/login" className="block text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Sign In</Link>
-              <Link
-                to="/register"
-                className="block bg-blue-600 text-white text-center py-2 rounded-full shadow hover:scale-105 transition-all"
-              >
-                Get Started
-              </Link>
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    goToDashboard();
+                  }}
+                  className="block w-full bg-green-600 text-white text-center py-2 rounded-full shadow hover:scale-105 transition-all"
+                >
+                  Go to Dashboard
+                </button>
+              ) : (
+                <>
+                  <Link to="/login" className="block text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Sign In</Link>
+                  <Link
+                    to="/register"
+                    className="block bg-blue-600 text-white text-center py-2 rounded-full shadow hover:scale-105 transition-all"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
