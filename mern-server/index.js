@@ -19,9 +19,13 @@ dotenv.config(); // Load environment variables from .env file
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ✅ Updated CORS Configuration for Vercel
+// ✅ Updated CORS Configuration for Vercel and Localhost
 const corsOptions = {
-  origin: ['https://mktonlinedesk.vercel.app'], // ✅ Allow frontend
+  origin: [
+    //'https://mktonlinedesk.vercel.app', // production frontend
+    //'http://localhost:5173',             // Vite dev server
+    //'http://localhost:3000'              // React default port
+  ],
   credentials: true,
 };
 
