@@ -72,7 +72,12 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const goToDashboard = () => {
-    navigate("/user/dashboard");
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (userData?.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/user/dashboard");
+    }
   };
 
   return (
