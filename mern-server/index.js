@@ -13,6 +13,7 @@ const User = require("./models/User"); // Assuming 'User' is your customer model
 const userRoutes = require('./routes/userRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const materialRoutes = require('./routes/materialRoutes');
+const facultyRoutes = require('./routes/facultyRoutes'); // ✅ Added faculty route
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -56,6 +57,7 @@ app.use("/api/logos", logosRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/faculty', facultyRoutes); // ✅ Faculty route added here
 
 // Media upload route
 app.post("/api/media/upload", upload.single("file"), (req, res) => {

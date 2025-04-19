@@ -3,7 +3,6 @@ import { AuthProvider } from './context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -21,6 +20,9 @@ import Leaderboard from './pages/Leaderboard';
 // 👇 Developer Profile Page
 import DeveloperProfile from './pages/DeveloperProfile';
 
+// 👇 Public Faculty Page
+import PublicFacultyPage from './pages/PublicFacultyPage'; // ✅ ADDED
+
 // Admin
 import AdminRoute from './components/AdminRoute';
 import AdminLayout from './components/AdminLayout';
@@ -32,6 +34,7 @@ import UserApproval from './pages/Admin/UserApproval';
 import RoleAssignment from './pages/Admin/RoleAssignment';
 import AllMaterialManagement from './pages/Admin/AllMaterialManagement';
 import CourseManager from './pages/Admin/CourseManager';
+import FacultyPage from './pages/Admin/FacultyPage'; // ✅ Already Added
 
 // User
 import ProtectedRoute from './components/ProtectedRoute';
@@ -75,7 +78,8 @@ const Layout = () => {
           <Route path="/reset-password" element={<RouteWrapper><ResetPassword /></RouteWrapper>} />
           <Route path="/waiting-approval" element={<RouteWrapper><WaitingApproval /></RouteWrapper>} />
           <Route path="/leaderboard" element={<RouteWrapper><Leaderboard /></RouteWrapper>} />
-          <Route path="/developers" element={<RouteWrapper><DeveloperProfile /></RouteWrapper>} /> {/* ✅ New Route */}
+          <Route path="/developers" element={<RouteWrapper><DeveloperProfile /></RouteWrapper>} />
+          <Route path="/faculty" element={<RouteWrapper><PublicFacultyPage /></RouteWrapper>} /> {/* ✅ Public Faculty Route */}
 
           {/* Admin Protected Routes */}
           <Route
@@ -138,6 +142,14 @@ const Layout = () => {
                       element={
                         <ProtectedRoute allowedRoles={['admin']}>
                           <CourseManager />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="faculty"
+                      element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                          <FacultyPage />
                         </ProtectedRoute>
                       }
                     />
