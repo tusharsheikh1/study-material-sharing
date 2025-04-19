@@ -3,6 +3,7 @@ import { FiHome, FiUpload, FiUser, FiFilter } from 'react-icons/fi';
 
 const MobileBottomNav = () => {
   return (
+    // This nav is fixed to the bottom of the screen and always visible
     <nav className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md sm:hidden flex justify-around items-center h-16">
       <NavLink
         to="/user/dashboard"
