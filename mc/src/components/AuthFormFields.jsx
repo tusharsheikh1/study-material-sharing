@@ -48,19 +48,34 @@ const AuthFormFields = ({
               className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>
+
+          <div>
+            <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Student ID
+            </label>
+            <input
+              type="text"
+              id="studentId"
+              name="studentId"
+              value={formData.studentId}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+            />
+          </div>
         </>
       )}
 
       {type === "login" && (
         <div>
-          <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-            Email or Phone
+          <label htmlFor="emailOrId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+            Email or Student ID
           </label>
           <input
             type="text"
-            id="emailOrPhone"
-            name="emailOrPhone"
-            value={formData.emailOrPhone}
+            id="emailOrId"
+            name="emailOrId"
+            value={formData.emailOrId}
             onChange={handleChange}
             required
             className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
@@ -87,7 +102,6 @@ const AuthFormFields = ({
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
-              required
               className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
             />
           </div>

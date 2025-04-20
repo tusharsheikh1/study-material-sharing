@@ -7,26 +7,26 @@ const {
   verifyOtp,
   sendOtp,
   resetPassword,
-  changePassword, // ✅ Added this
+  changePassword,
 } = require('../controllers/authController');
 
-const { protect, adminProtect } = require('../middleware/authMiddleware'); // Import adminProtect middleware
+const { protect, adminProtect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 // Public Routes
-router.post('/register', registerUser);        // Register a new user
-router.post('/login', loginUser);              // Login user
-router.post('/verify-otp', verifyOtp);         // Verify OTP
-router.post('/send-otp', sendOtp);             // Send OTP for general purposes
-router.post('/reset-password', resetPassword); // Reset password using OTP
+router.post('/register', registerUser);        // Register with studentId
+router.post('/login', loginUser);              // Login with email or studentId
+router.post('/verify-otp', verifyOtp);         // OTP verification
+router.post('/send-otp', sendOtp);             // Send OTP (email only now)
+router.post('/reset-password', resetPassword); // Reset using studentId/email and OTP
 
 // Protected Routes
-router.post('/logout', protect, logoutUser);   // Logout user
-router.get('/me', protect, getUser);           // Get authenticated user details
-router.post('/change-password', protect, changePassword); // ✅ Change password route
+router.post('/logout', protect, logoutUser);
+router.get('/me', protect, getUser);
+router.post('/change-password', protect, changePassword);
 
-// Admin Route
+// Admin Dashboard Test
 router.get('/admin/dashboard', protect, adminProtect, (req, res) => {
   res.json({ message: 'Welcome to the admin panel!' });
 });

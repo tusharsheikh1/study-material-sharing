@@ -28,11 +28,13 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  const register = async ({ fullName, email, password, phoneNumber, role, semester, batch }) => {
+  // ✅ Register using studentId instead of phone
+  const register = async ({ fullName, email, studentId, password, phoneNumber, role, semester, batch }) => {
     try {
       await api.post('/auth/register', {
         fullName,
         email,
+        studentId,
         password,
         phoneNumber,
         role,
@@ -46,10 +48,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (emailOrPhone, password) => {
+  // ✅ Login with email or studentId
+  const login = async (emailOrId, password) => {
     try {
       const { data } = await api.post('/auth/login', {
-        emailOrPhone,
+        emailOrId,
         password,
       });
       localStorage.setItem('token', data.token);
@@ -62,11 +65,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyOtp = async ({ email, phoneNumber, otp }) => {
+  // ✅ Verify OTP using email or studentId
+  const verifyOtp = async ({ email, studentId, otp }) => {
     try {
       const { data } = await api.post('/auth/verify-otp', {
         email,
-        phoneNumber,
+        studentId,
         otp,
       });
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -79,11 +83,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const sendOtp = async ({ email, phoneNumber }) => {
+  // ✅ Send OTP to email or studentId
+  const sendOtp = async ({ email, studentId }) => {
     try {
       await api.post('/auth/send-otp', {
         email,
-        phoneNumber,
+        studentId,
       });
       return true;
     } catch (error) {
@@ -92,11 +97,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const resetPassword = async ({ email, phoneNumber, otp, newPassword }) => {
+  // ✅ Reset password using studentId or email
+  const resetPassword = async ({ email, studentId, otp, newPassword }) => {
     try {
       const { data } = await api.post('/auth/reset-password', {
         email,
-        phoneNumber,
+        studentId,
         otp,
         newPassword,
       });

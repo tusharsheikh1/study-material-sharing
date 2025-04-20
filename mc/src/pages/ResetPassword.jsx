@@ -9,17 +9,18 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const [timer, setTimer] = useState(60); // 1-minute timer
+  const [timer, setTimer] = useState(60);
   const navigate = useNavigate();
   const location = useLocation();
+
   const email = location.state?.email;
-  const phoneNumber = location.state?.phoneNumber;
+  const studentId = location.state?.studentId;
 
   useEffect(() => {
-    if (!email && !phoneNumber) {
+    if (!email && !studentId) {
       navigate("/forgot-password");
     }
-  }, [email, phoneNumber, navigate]);
+  }, [email, studentId, navigate]);
 
   useEffect(() => {
     if (isResendDisabled) {
@@ -39,10 +40,7 @@ const ResetPassword = () => {
 
   const handleResendOtp = async () => {
     try {
-      await api.post("/auth/send-otp", {
-        email,
-        phoneNumber,
-      });
+      await api.post("/auth/send-otp", { email, studentId });
       toast.success("OTP resent successfully!");
       setIsResendDisabled(true);
       setTimer(60);
@@ -56,13 +54,13 @@ const ResetPassword = () => {
     try {
       const { data } = await api.post("/auth/reset-password", {
         email,
-        phoneNumber,
+        studentId,
         otp,
         newPassword,
       });
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      toast.success("Password reset successfully! Redirecting to login...");
+      toast.success("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to reset password");
@@ -78,11 +76,10 @@ const ResetPassword = () => {
           Reset Password
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter the OTP sent to your email or phone number and set a new password.
+          Enter the OTP sent to your email or student ID and set a new password.
         </p>
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
+
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div>
             <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
@@ -121,6 +118,7 @@ const ResetPassword = () => {
             Reset Password
           </button>
         </form>
+
         <div className="mt-4 text-center">
           <button
             onClick={handleResendOtp}

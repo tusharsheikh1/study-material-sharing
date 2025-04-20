@@ -12,12 +12,17 @@ const Navbar = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isDark, setIsDark] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userApproved, setUserApproved] = useState(false);
   const navigate = useNavigate();
 
   // Check login
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    setIsLoggedIn(!!userData);
+    if (userData) {
+      setIsLoggedIn(true);
+      const parsedUser = JSON.parse(userData);
+      setUserApproved(parsedUser?.approved);
+    }
   }, []);
 
   // Set logo
@@ -123,12 +128,19 @@ const Navbar = () => {
               {isDark ? <FiSun className="text-xl text-yellow-400" /> : <FiMoon className="text-xl text-gray-800" />}
             </button>
 
-            {isLoggedIn ? (
+            {isLoggedIn && userApproved ? (
               <button
                 onClick={goToDashboard}
                 className="bg-green-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transform transition-all"
               >
                 Go to Dashboard
+              </button>
+            ) : isLoggedIn && !userApproved ? (
+              <button
+                onClick={() => navigate("/waiting-approval")}
+                className="bg-yellow-500 text-white px-5 py-2 rounded-full shadow-md cursor-not-allowed"
+              >
+                Waiting for Approval
               </button>
             ) : (
               <>
@@ -171,7 +183,7 @@ const Navbar = () => {
               <Link to="/staff" className="block hover:text-blue-600 dark:hover:text-blue-400">Staff</Link>
               <Link to="/about" className="block hover:text-blue-600 dark:hover:text-blue-400">About Us</Link>
               <hr className="my-2 border-gray-300 dark:border-gray-700" />
-              {isLoggedIn ? (
+              {isLoggedIn && userApproved ? (
                 <button
                   onClick={() => {
                     setMenuOpen(false);
@@ -180,6 +192,13 @@ const Navbar = () => {
                   className="block w-full bg-green-600 text-white text-center py-2 rounded-full shadow hover:scale-105 transition-all"
                 >
                   Go to Dashboard
+                </button>
+              ) : isLoggedIn && !userApproved ? (
+                <button
+                  onClick={() => navigate("/waiting-approval")}
+                  className="block w-full bg-yellow-500 text-white text-center py-2 rounded-full shadow cursor-not-allowed"
+                >
+                  Waiting for Approval
                 </button>
               ) : (
                 <>

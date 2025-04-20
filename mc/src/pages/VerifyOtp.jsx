@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../utils/api"; // ✅ centralized axios instance
+import api from "../utils/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,20 +8,21 @@ const VerifyOtp = () => {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const [timer, setTimer] = useState(60); // 1-minute timer
+  const [timer, setTimer] = useState(60);
   const navigate = useNavigate();
   const location = useLocation();
 
   const email = location.state?.email;
-  const phoneNumber = location.state?.phoneNumber;
+  const studentId = location.state?.studentId;
+  const redirectTo = location.state?.redirectAfterVerify || "/";
 
   useEffect(() => {
-    if (!email && !phoneNumber) {
+    if (!email && !studentId) {
       navigate("/register");
     } else {
-      toast.success("OTP sent successfully! Please check your email or phone.");
+      toast.success("OTP sent successfully! Please check your email or student portal.");
     }
-  }, [email, phoneNumber, navigate]);
+  }, [email, studentId, navigate]);
 
   useEffect(() => {
     if (isResendDisabled) {
@@ -39,39 +40,48 @@ const VerifyOtp = () => {
     }
   }, [isResendDisabled]);
 
-  // Handle OTP verification
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+
+    console.log("Verifying OTP with:", {
+      email,
+      studentId: studentId?.toLowerCase(),
+      otp,
+    });
+
     try {
       const response = await api.post("/auth/verify-otp", {
         email,
-        phoneNumber,
+        studentId: studentId?.toLowerCase(),
         otp,
       });
+
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         toast.success("OTP verified successfully! Redirecting...");
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => navigate(redirectTo), 2000);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Verification failed");
-      toast.error(err.response?.data?.message || "Verification failed");
+      const msg = err.response?.data?.message || "Verification failed";
+      console.error("Verify OTP Error →", msg);
+      setError(msg);
+      toast.error(msg);
     }
   };
 
-  // Handle Resend OTP
   const handleResendOtp = async () => {
     try {
       await api.post("/auth/send-otp", {
         email,
-        phoneNumber,
+        studentId: studentId?.toLowerCase(),
       });
       toast.success("OTP resent successfully!");
       setIsResendDisabled(true);
       setTimer(60);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to resend OTP");
+      const msg = err.response?.data?.message || "Failed to resend OTP";
+      toast.error(msg);
     }
   };
 
@@ -83,17 +93,13 @@ const VerifyOtp = () => {
           Verify OTP
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter the OTP sent to your email or phone to verify your account.
+          Enter the OTP sent to your email or student ID to verify your account.
         </p>
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
+
         <form onSubmit={handleVerifyOtp} className="mt-6 space-y-6">
           <div>
-            <label
-              htmlFor="otp"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
               OTP
             </label>
             <input
@@ -114,6 +120,7 @@ const VerifyOtp = () => {
             Verify OTP
           </button>
         </form>
+
         <div className="mt-4 text-center">
           <button
             onClick={handleResendOtp}

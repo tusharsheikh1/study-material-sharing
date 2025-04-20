@@ -12,10 +12,17 @@ const ProtectedRoute = ({ children, allowedRoles = [], redirectTo = '/login' }) 
     return <Navigate to={redirectTo} replace />;
   }
 
+  // 🛑 Block access if user is not approved
+  if (!user.approved) {
+    return <Navigate to="/waiting-approval" replace />;
+  }
+
+  // 🛑 Block access if user role is not allowed
   if (allowedRoles.length && !allowedRoles.includes(user.role)) {
     return <Navigate to={redirectTo} replace />;
   }
 
+  // ✅ Passed all checks
   return children;
 };
 

@@ -1,4 +1,3 @@
-// 1️⃣ AuthForm.jsx (Main Component)
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,10 +11,11 @@ import AuthFormFields from "./AuthFormFields";
 const AuthForm = ({ type }) => {
   const initialState =
     type === "login"
-      ? { emailOrPhone: "", password: "" }
+      ? { emailOrId: "", password: "" }
       : {
           fullName: "",
           email: "",
+          studentId: "",
           password: "",
           phoneNumber: "",
           role: "",
@@ -60,7 +60,7 @@ const AuthForm = ({ type }) => {
     setSuccess(false);
     try {
       if (type === "login") {
-        const loggedIn = await login(formData.emailOrPhone, formData.password);
+        const loggedIn = await login(formData.emailOrId, formData.password);
         if (loggedIn) {
           toast.success("Login successful!");
           const storedUserRaw = localStorage.getItem("user");
@@ -99,6 +99,7 @@ const AuthForm = ({ type }) => {
         const success = await register({
           fullName: formData.fullName,
           email: formData.email,
+          studentId: formData.studentId,
           password: formData.password,
           phoneNumber: formData.phoneNumber,
           role: formData.role,
@@ -112,7 +113,8 @@ const AuthForm = ({ type }) => {
           navigate("/verify-otp", {
             state: {
               email: formData.email,
-              phoneNumber: formData.phoneNumber,
+              studentId: formData.studentId,
+              redirectAfterVerify: "/waiting-approval",
             },
           });
         }

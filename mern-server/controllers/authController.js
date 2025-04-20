@@ -4,9 +4,10 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
+const { otpTemplate } = require('../utils/emailTemplates.cjs'); // ✅ Updated import for .cjs
 
-// Utility: Send Email
-const sendEmail = async (to, subject, text) => {
+// ✅ Utility: Send HTML Email
+const sendEmail = async (to, subject, html) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -17,37 +18,22 @@ const sendEmail = async (to, subject, text) => {
     },
   });
 
-  await transporter.sendMail({ from: process.env.SMTP_USER, to, subject, text });
+  await transporter.sendMail({
+    from: process.env.SMTP_USER,
+    to,
+    subject,
+    html, // ✅ Send HTML content
+  });
 };
 
-// Utility: Send SMS
-const sendSms = async (phoneNumber, message) => {
-  const apiKey = process.env.SMS_API_KEY;
-  const senderId = process.env.SMS_SENDER_ID;
-  const apiUrl = `http://bulksmsbd.net/api/smsapi?api_key=${apiKey}&type=text&number=${phoneNumber}&senderid=${senderId}&message=${encodeURIComponent(message)}`;
-
-  try {
-    const response = await axios.get(apiUrl);
-    if (response.data.status !== '202') {
-      console.error('SMS sending failed:', response.data);
-      return false;
-    }
-    console.log('SMS sent successfully:', response.data);
-    return true;
-  } catch (err) {
-    console.error('Error sending SMS:', err.message);
-    return false;
-  }
-};
-
-// Admin creator
+// ✅ Admin creator
 const createAdminUser = async () => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const adminPhone = process.env.ADMIN_PHONE;
+    const adminStudentId = process.env.ADMIN_STUDENT_ID;
 
-    if (!adminEmail || !adminPassword || !adminPhone) return;
+    if (!adminEmail || !adminPassword || !adminStudentId) return;
 
     const existingAdmin = await User.findOne({ email: adminEmail });
     if (existingAdmin) return;
@@ -58,10 +44,9 @@ const createAdminUser = async () => {
       fullName: 'Admin User',
       email: adminEmail,
       password: hashedPassword,
-      phoneNumber: adminPhone,
+      studentId: adminStudentId,
       role: 'admin',
       emailVerified: true,
-      phoneVerified: true,
       approved: true,
     });
 
@@ -76,14 +61,14 @@ createAdminUser();
 
 // ✅ Register User
 const registerUser = async (req, res) => {
-  const { fullName, email, password, phoneNumber, role, semester, batch } = req.body;
+  const { fullName, email, studentId, password, phoneNumber, role, semester, batch } = req.body;
 
   try {
     const emailExists = await User.findOne({ email });
-    const phoneExists = await User.findOne({ phoneNumber });
+    const studentIdExists = await User.findOne({ studentId: studentId.toLowerCase() });
 
-    if (emailExists || phoneExists) {
-      return res.status(400).json({ message: 'User with this email or phone number already exists.' });
+    if (emailExists || studentIdExists) {
+      return res.status(400).json({ message: 'User with this email or student ID already exists.' });
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -94,6 +79,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       phoneNumber,
+      studentId: studentId.toLowerCase(),
       role: role || 'student',
       semester,
       batch,
@@ -101,28 +87,13 @@ const registerUser = async (req, res) => {
       otpExpiration,
     });
 
-    let emailSent = true;
-    let smsSent = true;
-
-    if (email) {
-      try {
-        await sendEmail(email, 'Your OTP for Registration', `Your OTP is ${otp}. It is valid for 10 minutes.`);
-      } catch (err) {
-        emailSent = false;
-        console.error('Error sending email:', err.message);
-      }
+    try {
+      await sendEmail(email, 'Your OTP for Registration', otpTemplate(otp)); // ✅ Use HTML template
+    } catch (err) {
+      return res.status(500).json({ message: 'Failed to send OTP email.' });
     }
 
-    if (phoneNumber) {
-      const smsMessage = `Your OTP for registration is ${otp}. It is valid for 10 minutes.`;
-      smsSent = await sendSms(phoneNumber, smsMessage);
-    }
-
-    if (!emailSent && !smsSent) {
-      return res.status(500).json({ message: 'Failed to send OTP via email and SMS.' });
-    }
-
-    res.status(201).json({ message: 'OTP sent to email and/or phone. Please verify to complete registration.' });
+    res.status(201).json({ message: 'OTP sent to email. Please verify to complete registration.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -130,10 +101,12 @@ const registerUser = async (req, res) => {
 
 // ✅ Verify OTP
 const verifyOtp = async (req, res) => {
-  const { email, phoneNumber, otp } = req.body;
+  const { email, studentId, otp } = req.body;
 
   try {
-    const user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    const user = await User.findOne({
+      $or: [{ email }, { studentId: studentId?.toLowerCase() }],
+    });
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
     if (user.otp !== otp || user.otpExpiration < Date.now()) {
@@ -141,8 +114,6 @@ const verifyOtp = async (req, res) => {
     }
 
     if (email && user.email === email) user.emailVerified = true;
-    if (phoneNumber && user.phoneNumber === phoneNumber) user.phoneVerified = true;
-
     user.otp = undefined;
     user.otpExpiration = undefined;
     await user.save();
@@ -156,6 +127,7 @@ const verifyOtp = async (req, res) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        studentId: user.studentId,
         phoneNumber: user.phoneNumber,
         role: user.role,
         semester: user.semester,
@@ -170,11 +142,14 @@ const verifyOtp = async (req, res) => {
 
 // ✅ Login
 const loginUser = async (req, res) => {
-  const { emailOrPhone, password } = req.body;
+  const { emailOrId, password } = req.body;
 
   try {
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phoneNumber: emailOrPhone }],
+      $or: [
+        { email: emailOrId },
+        { studentId: emailOrId.toLowerCase() },
+      ],
     });
 
     if (!user) return res.status(404).json({ message: 'User not found.' });
@@ -183,7 +158,7 @@ const loginUser = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials.' });
 
     if (!user.approved) {
-      return res.status(403).json({ message: 'Your account is not approved yet. Please wait for admin approval.' });
+      return res.status(403).json({ message: 'Your account is not approved yet.' });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -194,42 +169,7 @@ const loginUser = async (req, res) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
-        semester: user.semester,
-        batch: user.batch,
-        approved: user.approved,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// ✅ Reset Password
-const resetPassword = async (req, res) => {
-  const { email, phoneNumber, otp, newPassword } = req.body;
-
-  try {
-    const user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
-    if (!user || user.otp !== otp || user.otpExpiration < Date.now()) {
-      return res.status(400).json({ message: 'Invalid or expired OTP.' });
-    }
-
-    user.password = newPassword;
-    user.otp = undefined;
-    user.otpExpiration = undefined;
-    await user.save();
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({
-      message: 'Password reset successful.',
-      token,
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
+        studentId: user.studentId,
         phoneNumber: user.phoneNumber,
         role: user.role,
         semester: user.semester,
@@ -257,10 +197,10 @@ const getUser = async (req, res) => {
 };
 
 const sendOtp = async (req, res) => {
-  const { email, phoneNumber } = req.body;
+  const { email } = req.body;
 
   try {
-    const user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -268,22 +208,52 @@ const sendOtp = async (req, res) => {
     user.otpExpiration = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    if (email) {
-      await sendEmail(email, 'Your OTP for Verification', `Your OTP is ${otp}. It is valid for 10 minutes.`);
-    }
-
-    if (phoneNumber) {
-      const smsMessage = `Your Naabamart verification code is ${otp}. It will expire in 10 minutes. Please do not share this code.`;
-      await sendSms(phoneNumber, smsMessage);
-    }
-
+    await sendEmail(email, 'Your OTP for Verification', otpTemplate(otp)); // ✅ Use template
     res.json({ message: 'OTP sent successfully.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// ✅ Add this at the end of authController.js
+const resetPassword = async (req, res) => {
+  const { email, studentId, otp, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      $or: [{ email }, { studentId: studentId?.toLowerCase() }],
+    });
+
+    if (!user || user.otp !== otp || user.otpExpiration < Date.now()) {
+      return res.status(400).json({ message: 'Invalid or expired OTP.' });
+    }
+
+    user.password = newPassword;
+    user.otp = undefined;
+    user.otpExpiration = undefined;
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({
+      message: 'Password reset successful.',
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        studentId: user.studentId,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        semester: user.semester,
+        batch: user.batch,
+        approved: user.approved,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
@@ -304,11 +274,11 @@ const changePassword = async (req, res) => {
 
     res.status(200).json({ message: 'Password changed successfully.' });
   } catch (err) {
-    console.error('Password change error:', err.message);
     res.status(500).json({ message: 'Server error while changing password.' });
   }
 };
 
+// ✅ Export
 module.exports = {
   registerUser,
   loginUser,
@@ -318,4 +288,5 @@ module.exports = {
   sendOtp,
   resetPassword,
   changePassword,
+  sendEmail, // ✅ Export for use in userController
 };

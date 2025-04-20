@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../utils/api"; // ✅ centralized axios instance
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,34 +7,34 @@ import "react-toastify/dist/ReactToastify.css";
 const ForgotPassword = () => {
   const [useEmail, setUseEmail] = useState(true);
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (useEmail && !email) {
-        setError("Please provide an email address.");
-        toast.error("Please provide an email address.");
-        return;
-      }
-      if (!useEmail && !phoneNumber) {
-        setError("Please provide a phone number.");
-        toast.error("Please provide a phone number.");
-        return;
-      }
+    if (useEmail && !email) {
+      setError("Please provide an email address.");
+      toast.error("Email is required.");
+      return;
+    }
+    if (!useEmail && !studentId) {
+      setError("Please provide a Student ID.");
+      toast.error("Student ID is required.");
+      return;
+    }
 
+    try {
       await api.post("/auth/send-otp", {
         email: useEmail ? email : undefined,
-        phoneNumber: !useEmail ? phoneNumber : undefined,
+        studentId: !useEmail ? studentId : undefined,
       });
 
       setSuccess(true);
       toast.success("OTP sent successfully! Redirecting...");
       setTimeout(() => {
-        navigate("/reset-password", { state: { email, phoneNumber } });
+        navigate("/reset-password", { state: { email, studentId } });
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Error sending OTP");
@@ -50,16 +50,15 @@ const ForgotPassword = () => {
           Forgot Password
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter your email address or phone number to receive a one-time password (OTP) to reset your password.
+          Enter your Email or Student ID to receive a one-time password (OTP) to reset your password.
         </p>
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
         {success && (
           <p className="mt-4 text-sm text-center text-green-500">
             OTP sent successfully! Redirecting...
           </p>
         )}
+
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div className="flex justify-center space-x-4">
             <button
@@ -82,15 +81,13 @@ const ForgotPassword = () => {
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              Use Phone
+              Use Student ID
             </button>
           </div>
+
           {useEmail ? (
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email Address
               </label>
               <input
@@ -100,41 +97,37 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email address"
+                placeholder="Enter your email"
               />
             </div>
           ) : (
             <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phone Number
+              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
+                Student ID
               </label>
               <input
                 type="text"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                id="studentId"
+                name="studentId"
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
                 className="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your phone number"
+                placeholder="Enter your Student ID"
               />
             </div>
           )}
+
           <button
             type="submit"
-            className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Send OTP
           </button>
         </form>
+
         <p className="mt-6 text-sm text-center text-gray-600">
           Remembered your password?{" "}
-          <a
-            href="/login"
-            className="font-medium text-blue-500 hover:underline"
-          >
+          <a href="/login" className="font-medium text-blue-500 hover:underline">
             Sign In
           </a>
         </p>
