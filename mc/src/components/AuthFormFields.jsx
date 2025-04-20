@@ -92,68 +92,70 @@ const AuthFormFields = ({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Role
-              </label>
-              <select
-                name="role"
-                id="role"
-                value={formData.role}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-              >
-                <option value="">Select Role</option>
-                <option value="student">Student</option>
-                <option value="cr">CR</option>
-                <option value="faculty">Faculty</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Semester
-              </label>
-              <select
-                id="semester"
-                name="semester"
-                value={formData.semester}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-              >
-                <option value="">Select Semester</option>
-                {semesterOptions.map((s) => (
-                  <option key={s} value={s}>
-                    Semester {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           <div>
-            <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Batch
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Role
             </label>
             <select
-              id="batch"
-              name="batch"
-              value={formData.batch}
+              name="role"
+              id="role"
+              value={formData.role}
               onChange={handleChange}
               required
               className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
             >
-              <option value="">Select Batch</option>
-              {batchOptions.map((b) => (
-                <option key={b} value={b}>
-                  Batch {b}
-                </option>
-              ))}
+              <option value="">Select Role</option>
+              <option value="student">Student</option>
+              <option value="cr">CR</option>
+              <option value="faculty">Faculty</option>
             </select>
           </div>
+
+          {formData.role !== "faculty" && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Semester
+                </label>
+                <select
+                  id="semester"
+                  name="semester"
+                  value={formData.semester}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                >
+                  <option value="">Select Semester</option>
+                  {semesterOptions.map((s) => (
+                    <option key={s} value={s}>
+                      Semester {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Batch
+                </label>
+                <select
+                  id="batch"
+                  name="batch"
+                  value={formData.batch}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                >
+                  <option value="">Select Batch</option>
+                  {batchOptions.map((b) => (
+                    <option key={b} value={b}>
+                      Batch {b}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
         </>
       )}
 

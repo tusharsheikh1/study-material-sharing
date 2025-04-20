@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FiHome, FiUpload, FiLogOut, FiFilter } from 'react-icons/fi';
 import api from '../utils/api';
 import { motion } from 'framer-motion';
+import AuthContext from '../context/AuthContext';
 
 const UserSidebar = () => {
   const [logoUrl, setLogoUrl] = useState('');
+  const { user } = useContext(AuthContext);
 
   const navItems = [
-    { name: 'Dashboard', icon: <FiHome />, path: '/user/dashboard' },
-    { name: 'Upload', icon: <FiUpload />, path: '/user/upload' },
-    { name: 'Find Materials', icon: <FiFilter />, path: '/user/find' },
+    { name: 'Dashboard', icon: <FiHome />, path: '/user/dashboard', roles: ['student', 'cr'] },
+    { name: 'Upload', icon: <FiUpload />, path: '/user/upload', roles: ['student', 'cr', 'faculty'] },
+    { name: 'Find Materials', icon: <FiFilter />, path: '/user/find', roles: ['student', 'cr'] },
   ];
+
+  const filteredItems = navItems.filter(item => item.roles.includes(user?.role));
 
   useEffect(() => {
     const fetchLogo = async () => {
@@ -48,7 +52,7 @@ const UserSidebar = () => {
 
       {/* Navigation Items */}
       <nav className="flex flex-col gap-2 px-4">
-        {navItems.map((item) => (
+        {filteredItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}

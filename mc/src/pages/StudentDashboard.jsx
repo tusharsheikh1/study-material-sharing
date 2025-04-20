@@ -31,24 +31,26 @@ const StudentDashboard = () => {
   };
 
   useEffect(() => {
-    if (filters.semester && filters.batch) {
+    if (filters.semester && filters.batch && user.role !== 'faculty') {
       fetchMaterials();
     }
   }, [user]);
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SlideProgressChart
-          slideMaterials={materials.filter(m => m.materialType === 'slide')}
-          currentUserId={user._id}
-        />
+      {user.role !== 'faculty' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SlideProgressChart
+            slideMaterials={materials.filter(m => m.materialType === 'slide')}
+            currentUserId={user._id}
+          />
 
-        <StudyTimelineChart
-          materials={materials}
-          currentUserId={user._id}
-        />
-      </div>
+          <StudyTimelineChart
+            materials={materials}
+            currentUserId={user._id}
+          />
+        </div>
+      )}
 
       <h1 className="text-3xl font-bold text-gray-800">📚 My Study Materials</h1>
 
@@ -57,7 +59,11 @@ const StudentDashboard = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {/* Material List */}
-      <MaterialList materials={materials} />
+      {user.role !== 'faculty' && <MaterialList materials={materials} />}
+
+      {user.role === 'faculty' && (
+        <p className="text-lg text-gray-700">Welcome, Faculty! You have upload access only.</p>
+      )}
     </div>
   );
 };
