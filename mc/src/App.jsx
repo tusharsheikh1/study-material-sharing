@@ -19,6 +19,7 @@ import WaitingApproval from './pages/WaitingApproval';
 import Leaderboard from './pages/Leaderboard';
 import DeveloperProfile from './pages/DeveloperProfile';
 import PublicFacultyPage from './pages/PublicFacultyPage'; // ✅ ADDED
+import DocumentPage from './pages/DocumentPage'; // ✅ NEW VIEWER PAGE
 
 // Admin
 import AdminRoute from './components/AdminRoute';
@@ -76,7 +77,8 @@ const Layout = () => {
           <Route path="/waiting-approval" element={<RouteWrapper><WaitingApproval /></RouteWrapper>} />
           <Route path="/leaderboard" element={<RouteWrapper><Leaderboard /></RouteWrapper>} />
           <Route path="/developers" element={<RouteWrapper><DeveloperProfile /></RouteWrapper>} />
-          <Route path="/faculty" element={<RouteWrapper><PublicFacultyPage /></RouteWrapper>} /> {/* ✅ Public Faculty Route */}
+          <Route path="/faculty" element={<RouteWrapper><PublicFacultyPage /></RouteWrapper>} />
+          <Route path="/preview" element={<RouteWrapper><DocumentPage /></RouteWrapper>} /> {/* ✅ NEW DOCUMENT VIEW PAGE */}
 
           {/* Admin Protected Routes */}
           <Route

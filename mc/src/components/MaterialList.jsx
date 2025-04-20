@@ -74,19 +74,33 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
                 {mat.title || mat.originalFilename || 'Untitled'}
               </td>
               <td className="px-6 py-4 text-center">
-                <a
-                  href={mat.fileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex justify-center"
-                >
-                  <span className="md:hidden p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
-                    <FiDownload className="text-lg" />
-                  </span>
-                  <span className="hidden md:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs shadow">
-                    <FiDownload /> Download
-                  </span>
-                </a>
+                <div className="flex justify-center items-center gap-2 flex-wrap">
+                  <a
+                    href={mat.fileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex justify-center"
+                  >
+                    <span className="md:hidden p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
+                      <FiDownload className="text-lg" />
+                    </span>
+                    <span className="hidden md:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs shadow">
+                      <FiDownload /> Download
+                    </span>
+                  </a>
+                  <a
+                    href={`/preview?url=${encodeURIComponent(mat.fileUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="md:hidden p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition">
+                      👁️
+                    </span>
+                    <span className="hidden md:inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full text-xs shadow">
+                      👁️ View Doc
+                    </span>
+                  </a>
+                </div>
               </td>
               <td className="px-6 py-4 text-center">
                 <button
@@ -187,16 +201,16 @@ const MaterialList = ({ materials }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="p-6 space-y-4"
+                  className="p-4 sm:p-6 space-y-4"
                 >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div className="md:order-2 w-full md:w-auto flex flex-wrap items-center justify-end gap-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      <div>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-4">
+                    <div className="md:order-2 w-full md:w-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[13px] sm:text-sm font-medium text-gray-700 dark:text-gray-300 px-3 sm:px-0">
+                      <div className="flex-1">
                         🟡 Total: {courseMaterials.length} files | ✅{' '}
                         {courseMaterials.filter((m) => m.completedBy?.includes(user?._id)).length} done | ⏳{' '}
                         {courseMaterials.filter((m) => !m.completedBy?.includes(user?._id)).length} left
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-4">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3">
                         {Object.entries(groupByType(courseMaterials)).map(([type, list]) => (
                           <span key={type}>
                             {typeLabel[type]}: {list.length}
@@ -204,12 +218,13 @@ const MaterialList = ({ materials }) => {
                         ))}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-3 md:order-1">
+
+                    <div className="flex flex-wrap gap-2 sm:gap-3 md:order-1 px-3 sm:px-0">
                       {Object.entries(typeLabel).map(([typeKey, label]) => (
                         <button
                           key={typeKey}
                           onClick={() => handleTypeSelect(courseId, typeKey)}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition shadow-sm ${
+                          className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition shadow-sm ${
                             selectedType === typeKey
                               ? 'bg-blue-600 text-white shadow-md'
                               : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
