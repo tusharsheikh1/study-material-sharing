@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const facultySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -11,5 +11,5 @@ const facultySchema = new mongoose.Schema({
 
 const Faculty = mongoose.model('Faculty', facultySchema);
 
-// Export the Faculty model using ES module syntax
-export default Faculty;
+// Export the Faculty model using CommonJS syntax
+module.exports = Faculty;
