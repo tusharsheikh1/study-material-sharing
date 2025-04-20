@@ -31,16 +31,22 @@ export const AuthProvider = ({ children }) => {
   // ✅ Register using studentId instead of phone
   const register = async ({ fullName, email, studentId, password, phoneNumber, role, semester, batch }) => {
     try {
-      await api.post('/auth/register', {
+      const registrationData = {
         fullName,
         email,
-        studentId,
         password,
         phoneNumber,
         role,
         semester,
         batch,
-      });
+      };
+
+      // Include studentId only if the role is not faculty and studentId is provided
+      if (role !== "faculty" && studentId) {
+        registrationData.studentId = studentId.toLowerCase();  // Only convert to lowercase if studentId exists
+      }
+
+      await api.post('/auth/register', registrationData);
       return true;
     } catch (error) {
       console.error('Registration error:', error.response?.data?.message || error.message);
@@ -68,6 +74,10 @@ export const AuthProvider = ({ children }) => {
   // ✅ Verify OTP using email or studentId
   const verifyOtp = async ({ email, studentId, otp }) => {
     try {
+      // Only process studentId if it exists
+      if (studentId) {
+        studentId = studentId.toLowerCase(); // Only use toLowerCase if studentId exists
+      }
       const { data } = await api.post('/auth/verify-otp', {
         email,
         studentId,

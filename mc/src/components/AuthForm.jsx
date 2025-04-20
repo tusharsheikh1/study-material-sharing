@@ -96,16 +96,22 @@ const AuthForm = ({ type }) => {
           }
         }
       } else {
-        const success = await register({
+        const registrationData = {
           fullName: formData.fullName,
           email: formData.email,
-          studentId: formData.studentId,
           password: formData.password,
           phoneNumber: formData.phoneNumber,
           role: formData.role,
           semester: formData.semester,
           batch: formData.batch,
-        });
+        };
+
+        // Include studentId only if the role is not faculty
+        if (formData.role !== "faculty") {
+          registrationData.studentId = formData.studentId;
+        }
+
+        const success = await register(registrationData);
 
         if (success) {
           toast.success("Registration successful! Please verify your OTP.");
@@ -113,7 +119,7 @@ const AuthForm = ({ type }) => {
           navigate("/verify-otp", {
             state: {
               email: formData.email,
-              studentId: formData.studentId,
+              studentId: formData.studentId,  // pass studentId only if necessary
               redirectAfterVerify: "/waiting-approval",
             },
           });

@@ -1,4 +1,3 @@
-// 2️⃣ AuthFormFields.jsx
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { ImSpinner8 } from "react-icons/im";
 import PasswordInput from "./PasswordInput";
@@ -30,7 +29,7 @@ const AuthFormFields = ({
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -45,24 +44,47 @@ const AuthFormFields = ({
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
+          {/* Role selection */}
           <div>
-            <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Student ID
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Role
             </label>
-            <input
-              type="text"
-              id="studentId"
-              name="studentId"
-              value={formData.studentId}
+            <select
+              name="role"
+              id="role"
+              value={formData.role}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-            />
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Role</option>
+              <option value="student">Student</option>
+              <option value="cr">CR</option>
+              <option value="faculty">Faculty</option>
+            </select>
           </div>
+
+          {/* Show studentId field only if the role is not faculty */}
+          {formData.role !== "faculty" && (
+            <div>
+              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Student ID
+              </label>
+              <input
+                type="text"
+                id="studentId"
+                name="studentId"
+                value={formData.studentId}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
         </>
       )}
 
@@ -78,11 +100,12 @@ const AuthFormFields = ({
             value={formData.emailOrId}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+            className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       )}
 
+      {/* Password input */}
       <PasswordInput
         value={formData.password}
         onChange={handleChange}
@@ -102,29 +125,11 @@ const AuthFormFields = ({
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Role
-            </label>
-            <select
-              name="role"
-              id="role"
-              value={formData.role}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
-            >
-              <option value="">Select Role</option>
-              <option value="student">Student</option>
-              <option value="cr">CR</option>
-              <option value="faculty">Faculty</option>
-            </select>
-          </div>
-
+          {/* Semester and batch input */}
           {formData.role !== "faculty" && (
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -137,7 +142,7 @@ const AuthFormFields = ({
                   value={formData.semester}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Semester</option>
                   {semesterOptions.map((s) => (
@@ -158,7 +163,7 @@ const AuthFormFields = ({
                   value={formData.batch}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Batch</option>
                   {batchOptions.map((b) => (

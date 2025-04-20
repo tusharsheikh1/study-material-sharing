@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const facultySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -6,10 +6,10 @@ const facultySchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   photoUrl: { type: String, required: true }, // Cloudinary or image URL
-  // profileLink is removed since it's not required
   createdAt: { type: Date, default: Date.now }
 });
 
-const Faculty = mongoose.model("Faculty", facultySchema);
+const Faculty = mongoose.model('Faculty', facultySchema);
 
+// Export the Faculty model using ES module syntax
 export default Faculty;
