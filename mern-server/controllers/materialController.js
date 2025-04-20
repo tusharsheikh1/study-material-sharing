@@ -31,9 +31,20 @@ const uploadMaterial = async (req, res) => {
   }
 };
 
-// Get materials
+// Get materials with advanced filters, search, sort, pagination
 const getMaterials = async (req, res) => {
-  const { semester, courseId, batch, materialType, uploadedBy, sort } = req.query;
+  const {
+    semester,
+    courseId,
+    batch,
+    materialType,
+    uploadedBy,
+    sort,
+    search,
+    sortBy,
+    page = 1,
+    limit = 100,
+  } = req.query;
 
   const query = {};
   if (semester) query.semester = Number(semester);
@@ -42,15 +53,33 @@ const getMaterials = async (req, res) => {
   if (materialType) query.materialType = materialType;
   if (uploadedBy && uploadedBy !== 'undefined') query.uploadedBy = uploadedBy;
 
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+  const skip = (pageNum - 1) * limitNum;
+
+  let sortField = 'createdAt';
+  if (sortBy === 'courseName') sortField = 'courseId.courseName';
+  if (sortBy === 'uploader') sortField = 'uploadedBy.fullName';
   const sortOrder = sort === 'asc' ? 1 : -1;
 
   try {
     const materials = await Material.find(query)
-      .populate('uploadedBy', 'fullName email role profileImage')
-      .populate('courseId', 'courseCode courseName')
-      .sort({ createdAt: sortOrder });
+      .populate({
+        path: 'uploadedBy',
+        select: 'fullName email role profileImage',
+      })
+      .populate({
+        path: 'courseId',
+        match: search ? { courseName: { $regex: search, $options: 'i' } } : {},
+        select: 'courseCode courseName',
+      })
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limitNum);
 
-    res.status(200).json(materials);
+    const filtered = search ? materials.filter((mat) => mat.courseId) : materials;
+
+    res.status(200).json(filtered);
   } catch (error) {
     console.error('Fetch failed:', error);
     res.status(500).json({ message: 'Failed to fetch materials', error: error.message });
@@ -136,7 +165,7 @@ const getMaterialStats = async (req, res) => {
   }
 };
 
-// ✅ TOP CONTRIBUTORS — Now supports ?range=week or ?range=month — includes profileImage and LIMIT 10
+// Top Contributors
 const getTopContributors = async (req, res) => {
   const { range } = req.query;
 
@@ -161,7 +190,7 @@ const getTopContributors = async (req, res) => {
         },
       },
       { $sort: { count: -1 } },
-      { $limit: 10 }, // ✅ Show only top 10
+      { $limit: 10 },
       {
         $lookup: {
           from: "users",

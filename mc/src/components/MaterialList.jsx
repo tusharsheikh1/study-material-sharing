@@ -54,11 +54,11 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
       <table className="min-w-full text-sm text-gray-800 dark:text-gray-200">
         <thead className="bg-blue-50 dark:bg-gray-800 border-b-2 border-blue-200 dark:border-gray-700 sticky top-0 z-10">
           <tr className="text-left text-xs font-semibold uppercase tracking-wider text-blue-800 dark:text-blue-200">
-            <th className="px-6 py-4">File Name</th>
-            <th className="px-6 py-4 text-center">Action</th>
-            <th className="px-6 py-4 text-center">Status</th>
-            <th className="px-6 py-4">Uploader</th>
-            <th className="px-6 py-4">Date</th>
+            <th className="px-6 py-4 w-2/5">File Name</th>
+            <th className="px-6 py-4 text-center w-1/5">Action</th>
+            <th className="px-6 py-4 text-center w-1/5">Status</th>
+            <th className="px-6 py-4 w-1/5">Uploader</th>
+            <th className="px-6 py-4 w-1/5">Date</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -70,7 +70,7 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
               transition={{ delay: index * 0.05 }}
               className="hover:bg-blue-50 dark:hover:bg-gray-800 transition duration-200"
             >
-              <td className="px-6 py-4 break-all max-w-xs font-medium text-gray-900 dark:text-gray-100">
+              <td className="px-6 py-4 break-words max-w-md font-medium text-gray-900 dark:text-gray-100">
                 {mat.title || mat.originalFilename || 'Untitled'}
               </td>
               <td className="px-6 py-4 text-center">
@@ -78,9 +78,14 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
                   href={mat.fileUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs shadow"
+                  className="flex justify-center"
                 >
-                  <FiDownload /> Download
+                  <span className="md:hidden p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
+                    <FiDownload className="text-lg" />
+                  </span>
+                  <span className="hidden md:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs shadow">
+                    <FiDownload /> Download
+                  </span>
                 </a>
               </td>
               <td className="px-6 py-4 text-center">

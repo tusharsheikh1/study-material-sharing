@@ -5,6 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav'; // ✅ ADDED
 
 // Public Pages
 import Home from './pages/Home';
@@ -16,11 +17,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import WaitingApproval from './pages/WaitingApproval';
 import Leaderboard from './pages/Leaderboard';
-
-// 👇 Developer Profile Page
 import DeveloperProfile from './pages/DeveloperProfile';
-
-// 👇 Public Faculty Page
 import PublicFacultyPage from './pages/PublicFacultyPage'; // ✅ ADDED
 
 // Admin
@@ -89,70 +86,14 @@ const Layout = () => {
                 <AdminLayout>
                   <Routes>
                     <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route
-                      path="users"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <UserManagement />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="media-upload"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <MediaUpload />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="settings/logo"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin', 'faculty', 'cr']}>
-                          <LogoUpload />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="approvals"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <UserApproval />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="roles"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <RoleAssignment />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="materials"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <AllMaterialManagement />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="courses"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <CourseManager />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="faculty"
-                      element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <FacultyPage />
-                        </ProtectedRoute>
-                      }
-                    />
+                    <Route path="users" element={<ProtectedRoute allowedRoles={['admin']}><UserManagement /></ProtectedRoute>} />
+                    <Route path="media-upload" element={<ProtectedRoute allowedRoles={['admin']}><MediaUpload /></ProtectedRoute>} />
+                    <Route path="settings/logo" element={<ProtectedRoute allowedRoles={['admin', 'faculty', 'cr']}><LogoUpload /></ProtectedRoute>} />
+                    <Route path="approvals" element={<ProtectedRoute allowedRoles={['admin']}><UserApproval /></ProtectedRoute>} />
+                    <Route path="roles" element={<ProtectedRoute allowedRoles={['admin']}><RoleAssignment /></ProtectedRoute>} />
+                    <Route path="materials" element={<ProtectedRoute allowedRoles={['admin']}><AllMaterialManagement /></ProtectedRoute>} />
+                    <Route path="courses" element={<ProtectedRoute allowedRoles={['admin']}><CourseManager /></ProtectedRoute>} />
+                    <Route path="faculty" element={<ProtectedRoute allowedRoles={['admin']}><FacultyPage /></ProtectedRoute>} />
                   </Routes>
                 </AdminLayout>
               </AdminRoute>
@@ -166,47 +107,17 @@ const Layout = () => {
               <UserRoute>
                 <UserLayout>
                   <Routes>
-                    <Route
-                      path="dashboard"
-                      element={
-                        <ProtectedRoute allowedRoles={['student', 'cr']}>
-                          <StudentDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="uploads"
-                      element={
-                        <ProtectedRoute allowedRoles={['student', 'cr']}>
-                          <StudentUploadHistory />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="upload"
-                      element={
-                        <ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}>
-                          <NotesOrQuestionUpload />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="profile"
-                      element={
-                        <ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}>
-                          <UserProfile />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="find"
-                      element={
-                        <ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}>
-                          <FindMaterials />
-                        </ProtectedRoute>
-                      }
-                    />
+                    <Route path="dashboard" element={<ProtectedRoute allowedRoles={['student', 'cr']}><StudentDashboard /></ProtectedRoute>} />
+                    <Route path="uploads" element={<ProtectedRoute allowedRoles={['student', 'cr']}><StudentUploadHistory /></ProtectedRoute>} />
+                    <Route path="upload" element={<ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}><NotesOrQuestionUpload /></ProtectedRoute>} />
+                    <Route path="profile" element={<ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}><UserProfile /></ProtectedRoute>} />
+                    <Route path="find" element={<ProtectedRoute allowedRoles={['student', 'cr', 'faculty']}><FindMaterials /></ProtectedRoute>} />
                   </Routes>
+
+                  {/* ✅ Sticky Mobile Bottom Nav for /user routes */}
+                  <div className="sm:hidden">
+                    <MobileBottomNav />
+                  </div>
                 </UserLayout>
               </UserRoute>
             }

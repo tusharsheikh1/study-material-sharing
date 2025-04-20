@@ -58,41 +58,48 @@ const FacultyForm = ({ initialData = {}, onSuccess, isEditing = false }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white/70 dark:bg-gray-800/60 backdrop-blur-md shadow-xl rounded-3xl p-8 max-w-2xl mx-auto space-y-8 border border-gray-200 dark:border-gray-700 transition-all duration-300"
+      className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 rounded-3xl p-6 md:p-8 space-y-6 transition-all duration-300"
     >
-      <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-2 tracking-tight">
-        {isEditing ? "Edit Faculty Info" : "Add New Faculty"}
-      </h2>
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+          {isEditing ? "Edit Faculty Details" : "Add New Faculty"}
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Please fill in the required fields below
+        </p>
+      </div>
 
-      {/* Input with floating labels and icons */}
-      {[
-        { name: "name", label: "Full Name", icon: MdPerson },
-        { name: "designation", label: "Designation", icon: MdWork },
-        { name: "email", label: "Email", icon: MdEmail },
-        { name: "phone", label: "Phone", icon: MdPhone },
-      ].map(({ name, label, icon: Icon }) => (
-        <div key={name} className="relative">
-          <input
-            type={name === "email" ? "email" : "text"}
-            name={name}
-            value={formData[name]}
-            onChange={handleChange}
-            required
-            placeholder=" "
-            className="peer w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md px-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-          />
-          <label
-            className="absolute left-12 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-600 dark:peer-focus:text-blue-400 transition-all"
-          >
-            {label}
-          </label>
-          <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-xl" />
-        </div>
-      ))}
+      <div className="grid gap-6 md:grid-cols-2">
+        {[
+          { name: "name", label: "Full Name", icon: MdPerson },
+          { name: "designation", label: "Designation", icon: MdWork },
+          { name: "email", label: "Email", icon: MdEmail },
+          { name: "phone", label: "Phone", icon: MdPhone },
+        ].map(({ name, label, icon: Icon }) => (
+          <div key={name}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {label}
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <Icon className="text-xl" />
+              </span>
+              <input
+                type={name === "email" ? "email" : "text"}
+                name={name}
+                value={formData[name]}
+                onChange={handleChange}
+                required
+                className="w-full pl-11 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {/* Image upload */}
-      <div className="flex flex-col">
-        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+      {/* Image Upload */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Upload Profile Photo
         </label>
         <input
@@ -102,16 +109,14 @@ const FacultyForm = ({ initialData = {}, onSuccess, isEditing = false }) => {
           className="file-input file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 file:px-4 file:py-2 file:font-semibold hover:file:bg-blue-200 transition w-full"
         />
         {uploading && (
-          <p className="text-sm text-blue-500 mt-2 animate-pulse">
-            Uploading image...
-          </p>
+          <p className="text-sm text-blue-500 animate-pulse mt-1">Uploading image...</p>
         )}
         {formData.photoUrl && (
-          <div className="mt-4">
+          <div className="mt-3 flex justify-center">
             <img
               src={formData.photoUrl}
               alt="Uploaded"
-              className="w-24 h-24 rounded-full border shadow object-cover"
+              className="w-24 h-24 rounded-full border-4 border-blue-400 shadow hover:scale-105 transition-transform object-cover"
             />
           </div>
         )}

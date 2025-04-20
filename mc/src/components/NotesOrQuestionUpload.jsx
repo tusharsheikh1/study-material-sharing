@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import ConfirmationPopup from './ConfirmationPopup';
 import MaterialUploadForm from './MaterialUploadForm';
 import UploadedMaterialList from './UploadedMaterialList';
+import { ImSpinner8 } from 'react-icons/im'; // ✅ Spinner icon added
 
 const NotesOrQuestionUpload = ({ onUploadSuccess }) => {
   const { user } = useContext(AuthContext);
@@ -135,6 +136,13 @@ const NotesOrQuestionUpload = ({ onUploadSuccess }) => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-10">
+      {uploading && (
+        <div className="flex justify-center items-center gap-2 text-blue-600 font-medium">
+          <ImSpinner8 className="animate-spin" size={24} />
+          Uploading... {uploadProgress}%
+        </div>
+      )}
+
       <MaterialUploadForm
         formData={formData}
         courses={courses}

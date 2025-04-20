@@ -41,7 +41,7 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ API functions
+// ✅ Customer Management API
 export const getCustomers = async (params) => {
   return await api.get('/customers', { params });
 };
@@ -64,6 +64,39 @@ export const deactivateCustomer = async (id) => {
 
 export const searchCustomers = async (query) => {
   return await api.get(`/customers/search`, { params: { query } });
+};
+
+// ✅ Material Management API
+export const getMaterials = async ({
+  batch = '',
+  semester = '',
+  materialType = '',
+  uploadedBy = '',
+  courseId = '',
+  search = '',
+  sortBy = '',
+  sort = 'desc',
+  page = 1,
+  limit = 100,
+} = {}) => {
+  const params = {};
+
+  if (batch) params.batch = batch;
+  if (semester) params.semester = semester;
+  if (materialType) params.materialType = materialType;
+  if (uploadedBy) params.uploadedBy = uploadedBy;
+  if (courseId && courseId !== 'All') params.courseId = courseId;
+  if (search) params.search = search;
+  if (sortBy) params.sortBy = sortBy;
+  if (sort) params.sort = sort;
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
+  return await api.get('/materials', { params });
+};
+
+export const deleteMaterial = async (id) => {
+  return await api.delete(`/materials/${id}`);
 };
 
 export default api;
