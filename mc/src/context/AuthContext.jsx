@@ -31,6 +31,11 @@ export const AuthProvider = ({ children }) => {
   // ✅ Register using studentId instead of phone
   const register = async ({ fullName, email, studentId, password, phoneNumber, role, semester, batch }) => {
     try {
+      // Ensure 'faculty' is excluded
+      if (role === 'faculty') {
+        throw new Error("Faculty role is not allowed.");
+      }
+
       const registrationData = {
         fullName,
         email,
@@ -134,7 +139,6 @@ export const AuthProvider = ({ children }) => {
 
   // Role-based access helpers
   const isAdmin = () => user?.role === 'admin';
-  const isFaculty = () => user?.role === 'faculty';
   const isCr = () => user?.role === 'cr';
   const isStudent = () => user?.role === 'student';
   const isAuthenticated = () => !!user;
@@ -153,7 +157,6 @@ export const AuthProvider = ({ children }) => {
         logout,
         loading,
         isAdmin,
-        isFaculty,
         isCr,
         isStudent,
         isAuthenticated,

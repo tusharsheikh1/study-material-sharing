@@ -2,6 +2,7 @@ const Material = require('../models/Material');
 const Course = require('../models/Course');
 const cloudinary = require('cloudinary').v2;
 const User = require('../models/User');
+const path = require('path');
 
 // Upload material
 const uploadMaterial = async (req, res) => {
@@ -12,16 +13,20 @@ const uploadMaterial = async (req, res) => {
   }
 
   try {
+    // Extract file extension for consistent file handling
+    const fileExtension = path.extname(req.file.originalname).toLowerCase();
+
     const newMaterial = await Material.create({
       uploadedBy: req.user._id,
       courseId,
       semester: Number(semester),
       batch: Number(batch),
       materialType,
-      fileUrl: req.file.path,
+      fileUrl: req.file.path,  // Assuming local storage
       filePublicId: req.file.filename,
       title: req.file.originalname,
       description: '',
+      fileExtension,  // Store the file extension for future reference
     });
 
     res.status(201).json({ message: 'Material uploaded successfully.', material: newMaterial });
@@ -220,6 +225,30 @@ const getTopContributors = async (req, res) => {
   }
 };
 
+// Download material (ensure the file URL is used correctly)
+const downloadMaterial = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const material = await Material.findById(id);
+    if (!material) return res.status(404).json({ message: 'Material not found' });
+
+    // Ensure file URL is correct
+    const fileUrl = material.fileUrl;
+
+    // For Cloudinary, you can use the URL directly, for local storage, ensure the file is accessible
+    res.download(fileUrl, material.title, (err) => {
+      if (err) {
+        console.error('Download failed:', err);
+        res.status(500).json({ message: 'Failed to download material' });
+      }
+    });
+  } catch (error) {
+    console.error('Download failed:', error);
+    res.status(500).json({ message: 'Failed to download material', error: error.message });
+  }
+};
+
 module.exports = {
   uploadMaterial,
   getMaterials,
@@ -227,4 +256,5 @@ module.exports = {
   markMaterialStatus,
   getMaterialStats,
   getTopContributors,
+  downloadMaterial,  // Added download functionality
 };

@@ -7,7 +7,11 @@ const userSchema = new mongoose.Schema({
   studentId: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phoneNumber: { type: String },
-  role: { type: String, default: 'student' },
+  role: { 
+    type: String, 
+    enum: ['student', 'cr', 'admin'], // Restrict to these roles only
+    default: 'student' 
+  },
   semester: { type: Number },
   batch: { type: String },
   emailVerified: { type: Boolean, default: false },

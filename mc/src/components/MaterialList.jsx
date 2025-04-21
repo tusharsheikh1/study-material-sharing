@@ -76,7 +76,7 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
               <td className="px-6 py-4 text-center">
                 <div className="flex justify-center items-center gap-2 flex-wrap">
                   <a
-                    href={mat.fileUrl}
+                    href={mat.fileUrl} // Ensure this URL is accessible and valid for download
                     target="_blank"
                     rel="noreferrer"
                     className="flex justify-center"
@@ -139,7 +139,7 @@ const MaterialList = ({ materials }) => {
   }, [materials]);
 
   const toggleCourseExpand = (courseId) => {
-    setExpandedCourseId(prev => prev === courseId ? null : courseId);
+    setExpandedCourseId((prev) => (prev === courseId ? null : courseId));
   };
 
   const handleTypeSelect = (courseId, typeKey) => {

@@ -11,9 +11,8 @@ const AuthFormFields = ({
   setShowPassword,
   loading,
   batchOptions,
+  semesterOptions,  // Add semesterOptions as prop
 }) => {
-  const semesterOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {type !== "login" && (
@@ -48,26 +47,6 @@ const AuthFormFields = ({
             />
           </div>
 
-          {/* Role selection */}
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Role
-            </label>
-            <select
-              name="role"
-              id="role"
-              value={formData.role}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Role</option>
-              <option value="student">Student</option>
-              <option value="cr">CR</option>
-              <option value="faculty">Faculty</option>
-            </select>
-          </div>
-
           {/* Show studentId field only if the role is not faculty */}
           {formData.role !== "faculty" && (
             <div>
@@ -85,36 +64,7 @@ const AuthFormFields = ({
               />
             </div>
           )}
-        </>
-      )}
 
-      {type === "login" && (
-        <div>
-          <label htmlFor="emailOrId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-            Email or Student ID
-          </label>
-          <input
-            type="text"
-            id="emailOrId"
-            name="emailOrId"
-            value={formData.emailOrId}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      )}
-
-      {/* Password input */}
-      <PasswordInput
-        value={formData.password}
-        onChange={handleChange}
-        showPassword={showPassword}
-        setShowPassword={setShowPassword}
-      />
-
-      {type !== "login" && (
-        <>
           <div>
             <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Phone Number
@@ -129,7 +79,15 @@ const AuthFormFields = ({
             />
           </div>
 
-          {/* Semester and batch input */}
+          {/* Password input */}
+          <PasswordInput
+            value={formData.password}
+            onChange={handleChange}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+          />
+
+          {/* Semester and batch input in one row */}
           {formData.role !== "faculty" && (
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -175,17 +133,80 @@ const AuthFormFields = ({
               </div>
             </div>
           )}
+
+          {/* Role selection placed below semester and batch */}
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Role
+            </label>
+            <select
+              name="role"
+              id="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Role</option>
+              <option value="student">Student</option>
+              <option value="cr">CR</option>
+            </select>
+          </div>
         </>
       )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {loading && <ImSpinner8 className="animate-spin text-lg" />}
-        {type === "login" ? "Sign In" : "Sign Up"}
-      </button>
+      {type === "login" && (
+        <>
+          <div>
+            <label htmlFor="emailOrId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Email or Student ID
+            </label>
+            <input
+              type="text"
+              id="emailOrId"
+              name="emailOrId"
+              value={formData.emailOrId}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Password field */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {loading && <ImSpinner8 className="animate-spin text-lg" />}
+            Sign In
+          </button>
+        </>
+      )}
 
       {type === "login" && (
         <div className="text-center text-sm mt-4">
@@ -193,6 +214,19 @@ const AuthFormFields = ({
             Forgot Password?
           </a>
         </div>
+      )}
+
+      {type !== "login" && (
+        <>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {loading && <ImSpinner8 className="animate-spin text-lg" />}
+            {type === "login" ? "Sign In" : "Sign Up"}
+          </button>
+        </>
       )}
     </form>
   );
