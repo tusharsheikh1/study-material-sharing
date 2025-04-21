@@ -9,7 +9,8 @@ const {
   deleteMaterial,
   markMaterialStatus,
   getMaterialStats,
-  getTopContributors, // ✅ newly added
+  getTopContributors,
+  downloadMaterial, // ✅ Ensure it's imported
 } = require('../controllers/materialController');
 
 const {
@@ -25,7 +26,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 🔧 Cloudinary storage with dynamic folder structure
+// 🔧 Cloudinary storage with original filename
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
@@ -35,41 +36,44 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: folderPath,
-      allowed_formats: undefined, // ✅ allow all file types
-      use_filename: false,
-      unique_filename: true,
-      resource_type: 'raw', // ✅ support any file type (including large files)
+      allowed_formats: undefined,       // ✅ allow all file types
+      use_filename: true,               // ✅ use original filename
+      unique_filename: true,            // ✅ don't randomize filename
+      resource_type: 'raw',             // ✅ support all file types
     };
   },
 });
 
-// 🔧 Multer setup with no size limit
+// 🔧 Multer setup
 const upload = multer({
   storage,
   limits: { fileSize: Infinity },
   fileFilter: (req, file, cb) => {
-    cb(null, true); // ✅ allow all file types
+    cb(null, true); // ✅ allow everything
   },
 });
 
 /** ROUTES **/
 
-// ✅ Everyone can view
+// ✅ Get all materials
 router.get('/', protect, getMaterials);
 
-// ✅ Everyone can upload (any logged-in user)
+// ✅ Upload a new material
 router.post('/', protect, upload.single('file'), uploadMaterial);
 
-// ✅ Everyone can delete their own; admin can delete all
+// ✅ Delete a material
 router.delete('/:id', protect, deleteMaterial);
 
 // ✅ Toggle material completion status
 router.put('/toggle-status/:id', protect, markMaterialStatus);
 
-// ✅ Stats for homepage
-router.get('/stats', getMaterialStats); // public
+// ✅ Get material stats for dashboard
+router.get('/stats', getMaterialStats);
 
-// ✅ Top Contributors (NEW & public)
+// ✅ Get top contributors
 router.get('/top-contributors', getTopContributors);
+
+// ✅ Download material with forced filename
+router.get('/download/:id', protect, downloadMaterial); // ✅ Enabled
 
 module.exports = router;

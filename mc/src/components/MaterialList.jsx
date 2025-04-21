@@ -45,6 +45,36 @@ const groupByType = (materials) => {
   return grouped;
 };
 
+const handleMaterialDownload = async (id, filename) => {
+  try {
+    const response = await fetch(`/api/materials/download/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    const contentType = response.headers.get('Content-Type');
+
+    if (!response.body || contentType.includes('application/json')) {
+      const error = await response.json();
+      throw new Error(error.message || 'Something went wrong');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename || 'file');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    console.error('Download failed:', err);
+    alert('Download failed: ' + err.message);
+  }
+};
+
 const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
   if (!materials || materials.length === 0)
     return <div className="text-gray-500 px-6 py-4">No materials found.</div>;
@@ -75,10 +105,8 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
               </td>
               <td className="px-6 py-4 text-center">
                 <div className="flex justify-center items-center gap-2 flex-wrap">
-                  <a
-                    href={mat.fileUrl} // Ensure this URL is accessible and valid for download
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    onClick={() => handleMaterialDownload(mat._id, mat.title)}
                     className="flex justify-center"
                   >
                     <span className="md:hidden p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
@@ -87,7 +115,7 @@ const MaterialTable = ({ materials, currentUserId, onToggleStatus }) => {
                     <span className="hidden md:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-xs shadow">
                       <FiDownload /> Download
                     </span>
-                  </a>
+                  </button>
                   <a
                     href={`/preview?url=${encodeURIComponent(mat.fileUrl)}`}
                     target="_blank"

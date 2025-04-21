@@ -3,6 +3,8 @@ const Course = require('../models/Course');
 const cloudinary = require('cloudinary').v2;
 const User = require('../models/User');
 const path = require('path');
+const https = require('https'); // ✅ for streaming from Cloudinary
+const { pipeline } = require('stream'); // ✅ for efficient streaming
 
 // Upload material
 const uploadMaterial = async (req, res) => {
@@ -13,7 +15,6 @@ const uploadMaterial = async (req, res) => {
   }
 
   try {
-    // Extract file extension for consistent file handling
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
 
     const newMaterial = await Material.create({
@@ -22,11 +23,11 @@ const uploadMaterial = async (req, res) => {
       semester: Number(semester),
       batch: Number(batch),
       materialType,
-      fileUrl: req.file.path,  // Assuming local storage
-      filePublicId: req.file.filename,
+      fileUrl: req.file.secure_url || req.file.path,
+      filePublicId: req.file.public_id || req.file.filename,
       title: req.file.originalname,
       description: '',
-      fileExtension,  // Store the file extension for future reference
+      fileExtension,
     });
 
     res.status(201).json({ message: 'Material uploaded successfully.', material: newMaterial });
@@ -36,7 +37,7 @@ const uploadMaterial = async (req, res) => {
   }
 };
 
-// Get materials with advanced filters, search, sort, pagination
+// Get materials
 const getMaterials = async (req, res) => {
   const {
     semester,
@@ -225,23 +226,32 @@ const getTopContributors = async (req, res) => {
   }
 };
 
-// Download material (ensure the file URL is used correctly)
+// ✅ Fixed: Proper download response
 const downloadMaterial = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     const material = await Material.findById(id);
     if (!material) return res.status(404).json({ message: 'Material not found' });
 
-    // Ensure file URL is correct
     const fileUrl = material.fileUrl;
+    const originalName = material.title || 'file';
+    const fileExtension = path.extname(originalName);
+    const filenameWithExtension = originalName.endsWith(fileExtension)
+      ? originalName
+      : `${originalName}${fileExtension}`;
 
-    // For Cloudinary, you can use the URL directly, for local storage, ensure the file is accessible
-    res.download(fileUrl, material.title, (err) => {
-      if (err) {
-        console.error('Download failed:', err);
-        res.status(500).json({ message: 'Failed to download material' });
-      }
+    // Set headers
+    res.setHeader('Content-Disposition', `attachment; filename="${filenameWithExtension}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+
+    https.get(fileUrl, (fileRes) => {
+      pipeline(fileRes, res, (err) => {
+        if (err) {
+          console.error('Stream failed:', err);
+          res.status(500).end('Download failed');
+        }
+      });
     });
   } catch (error) {
     console.error('Download failed:', error);
@@ -256,5 +266,5 @@ module.exports = {
   markMaterialStatus,
   getMaterialStats,
   getTopContributors,
-  downloadMaterial,  // Added download functionality
+  downloadMaterial,
 };

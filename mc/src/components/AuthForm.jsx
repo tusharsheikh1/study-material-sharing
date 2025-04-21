@@ -79,13 +79,7 @@ const AuthForm = ({ type }) => {
           const batch = storedUser?.batch;
           if (role === "admin") {
             navigate("/admin/dashboard");
-          } else if (["faculty", "cr"].includes(role)) {
-            if (!sem || !batch) {
-              navigate("/user/profile");
-            } else {
-              navigate("/user/dashboard");
-            }
-          } else if (role === "student") {
+          } else if (["cr", "student"].includes(role)) {
             if (!sem || !batch) {
               navigate("/user/profile");
             } else {
@@ -104,12 +98,8 @@ const AuthForm = ({ type }) => {
           role: formData.role,
           semester: formData.semester,
           batch: formData.batch,
+          studentId: formData.studentId,
         };
-
-        // Include studentId only if the role is not faculty
-        if (formData.role !== "faculty") {
-          registrationData.studentId = formData.studentId;
-        }
 
         const success = await register(registrationData);
 
@@ -119,7 +109,7 @@ const AuthForm = ({ type }) => {
           navigate("/verify-otp", {
             state: {
               email: formData.email,
-              studentId: formData.studentId,  // pass studentId only if necessary
+              studentId: formData.studentId,
               redirectAfterVerify: "/waiting-approval",
             },
           });
@@ -134,6 +124,7 @@ const AuthForm = ({ type }) => {
   };
 
   const batchOptions = Array.from({ length: 100 }, (_, i) => i + 1);
+  const semesterOptions = Array.from({ length: 10 }, (_, i) => i + 1);
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-10 bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -170,6 +161,7 @@ const AuthForm = ({ type }) => {
           setShowPassword={setShowPassword}
           loading={loading}
           batchOptions={batchOptions}
+          semesterOptions={semesterOptions}
         />
 
         <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">

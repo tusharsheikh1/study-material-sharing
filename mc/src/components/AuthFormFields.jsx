@@ -11,12 +11,13 @@ const AuthFormFields = ({
   setShowPassword,
   loading,
   batchOptions,
-  semesterOptions,  // Add semesterOptions as prop
+  semesterOptions,
 }) => {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {type !== "login" && (
         <>
+          {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Full Name
@@ -28,10 +29,11 @@ const AuthFormFields = ({
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
+          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Email
@@ -43,28 +45,27 @@ const AuthFormFields = ({
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Show studentId field only if the role is not faculty */}
-          {formData.role !== "faculty" && (
-            <div>
-              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                Student ID
-              </label>
-              <input
-                type="text"
-                id="studentId"
-                name="studentId"
-                value={formData.studentId}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
+          {/* Student ID */}
+          <div>
+            <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+              Student ID
+            </label>
+            <input
+              type="text"
+              id="studentId"
+              name="studentId"
+              value={formData.studentId}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
+          {/* Phone Number */}
           <div>
             <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Phone Number
@@ -75,11 +76,11 @@ const AuthFormFields = ({
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Password input */}
+          {/* Password */}
           <PasswordInput
             value={formData.password}
             onChange={handleChange}
@@ -87,54 +88,52 @@ const AuthFormFields = ({
             setShowPassword={setShowPassword}
           />
 
-          {/* Semester and batch input in one row */}
-          {formData.role !== "faculty" && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Semester
-                </label>
-                <select
-                  id="semester"
-                  name="semester"
-                  value={formData.semester}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Semester</option>
-                  {semesterOptions.map((s) => (
-                    <option key={s} value={s}>
-                      Semester {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  Batch
-                </label>
-                <select
-                  id="batch"
-                  name="batch"
-                  value={formData.batch}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Batch</option>
-                  {batchOptions.map((b) => (
-                    <option key={b} value={b}>
-                      Batch {b}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* Semester & Batch in one row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="semester" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Semester
+              </label>
+              <select
+                id="semester"
+                name="semester"
+                value={formData.semester}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Semester</option>
+                {semesterOptions.map((s) => (
+                  <option key={s} value={s}>
+                    Semester {s}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
 
-          {/* Role selection placed below semester and batch */}
+            <div>
+              <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                Batch
+              </label>
+              <select
+                id="batch"
+                name="batch"
+                value={formData.batch}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Batch</option>
+                {batchOptions.map((b) => (
+                  <option key={b} value={b}>
+                    Batch {b}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Role */}
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Role
@@ -145,7 +144,7 @@ const AuthFormFields = ({
               value={formData.role}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Role</option>
               <option value="student">Student</option>
@@ -155,6 +154,7 @@ const AuthFormFields = ({
         </>
       )}
 
+      {/* Login Fields */}
       {type === "login" && (
         <>
           <div>
@@ -168,11 +168,11 @@ const AuthFormFields = ({
               value={formData.emailOrId}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Password field */}
+          {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Password
@@ -185,7 +185,7 @@ const AuthFormFields = ({
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 mt-1 text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 mt-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 type="button"
@@ -196,37 +196,26 @@ const AuthFormFields = ({
               </button>
             </div>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {loading && <ImSpinner8 className="animate-spin text-lg" />}
-            Sign In
-          </button>
         </>
       )}
 
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        {loading && <ImSpinner8 className="animate-spin text-lg" />}
+        {type === "login" ? "Sign In" : "Sign Up"}
+      </button>
+
+      {/* Forgot Password */}
       {type === "login" && (
         <div className="text-center text-sm mt-4">
           <a href="/forgot-password" className="text-blue-500 hover:underline">
             Forgot Password?
           </a>
         </div>
-      )}
-
-      {type !== "login" && (
-        <>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-3 flex items-center justify-center gap-2 text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {loading && <ImSpinner8 className="animate-spin text-lg" />}
-            {type === "login" ? "Sign In" : "Sign Up"}
-          </button>
-        </>
       )}
     </form>
   );

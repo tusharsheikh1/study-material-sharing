@@ -40,6 +40,9 @@ const materialSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    fileExtension: {
+      type: String,
+    },
     completedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
