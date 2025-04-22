@@ -3,8 +3,6 @@ const Course = require('../models/Course');
 const cloudinary = require('cloudinary').v2;
 const User = require('../models/User');
 const path = require('path');
-const https = require('https');
-const { pipeline } = require('stream');
 
 // Upload material
 const uploadMaterial = async (req, res) => {
@@ -226,7 +224,7 @@ const getTopContributors = async (req, res) => {
   }
 };
 
-/// ✅ Final: Secure & consistent download using signed URL for raw files
+// ✅ Fixed: Cloudinary signed raw file download
 const downloadMaterial = async (req, res) => {
   const { id } = req.params;
 
@@ -240,23 +238,20 @@ const downloadMaterial = async (req, res) => {
       ? originalName
       : `${originalName}${fileExtension}`;
 
-    // ✅ Generate a signed Cloudinary URL for raw resource
-    const signedUrl = cloudinary.url(`materials/${material.filePublicId}`, {
-      resource_type: 'raw',
-      secure: true,
-      type: 'upload',
-      sign_url: true,
-      attachment: filenameWithExtension,
-    });
+    const signedUrl = cloudinary.utils.private_download_url(
+      `materials/${material.filePublicId}`,
+      'raw',
+      {
+        attachment: filenameWithExtension,
+      }
+    );
 
-    // ✅ Redirect to the signed URL
     res.redirect(signedUrl);
   } catch (error) {
     console.error('❌ Signed URL download failed:', error);
     res.status(500).json({ message: 'Failed to download material', error: error.message });
   }
 };
-
 
 module.exports = {
   uploadMaterial,
