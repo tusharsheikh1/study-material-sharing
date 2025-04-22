@@ -10,7 +10,7 @@ import {
   FiBook,
   FiClipboard,
 } from 'react-icons/fi';
-import { FaChalkboardTeacher } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserCog } from 'react-icons/fa'; // ✅ NEW ICON ADDED
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
 
@@ -42,7 +42,8 @@ const AdminSidebar = () => {
     { name: 'Role Assignment', icon: <FiUser />, path: '/admin/roles', roles: ['admin'] },
     { name: 'Course Manager', icon: <FiBook />, path: '/admin/courses', roles: ['admin'] },
     { name: 'All Materials', icon: <FiClipboard />, path: '/admin/materials', roles: ['admin'] },
-    { name: 'Our Faculty', icon: <FaChalkboardTeacher />, path: '/admin/faculty', roles: ['admin'] }, // ✅ Added faculty
+    { name: 'Our Faculty', icon: <FaChalkboardTeacher />, path: '/admin/faculty', roles: ['admin'] },
+    { name: 'Office & Staff', icon: <FaUserCog />, path: '/admin/staff', roles: ['admin'] }, // ✅ NEWLY ADDED
     {
       name: 'Settings',
       icon: <FiSettings />,
