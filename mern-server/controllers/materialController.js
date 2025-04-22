@@ -3,8 +3,8 @@ const Course = require('../models/Course');
 const cloudinary = require('cloudinary').v2;
 const User = require('../models/User');
 const path = require('path');
-const https = require('https'); // ✅ for streaming from Cloudinary
-const { pipeline } = require('stream'); // ✅ for efficient streaming
+const https = require('https');
+const { pipeline } = require('stream');
 
 // Upload material
 const uploadMaterial = async (req, res) => {
@@ -226,7 +226,7 @@ const getTopContributors = async (req, res) => {
   }
 };
 
-// ✅ Fixed: Proper download response
+// ✅ Final: Secure & consistent download
 const downloadMaterial = async (req, res) => {
   const { id } = req.params;
 
@@ -241,21 +241,29 @@ const downloadMaterial = async (req, res) => {
       ? originalName
       : `${originalName}${fileExtension}`;
 
-    // Set headers
     res.setHeader('Content-Disposition', `attachment; filename="${filenameWithExtension}"`);
     res.setHeader('Content-Type', 'application/octet-stream');
 
     https.get(fileUrl, (fileRes) => {
+      if (fileRes.statusCode !== 200) {
+        console.error('Failed to fetch file from remote source:', fileRes.statusCode);
+        return res.status(fileRes.statusCode).end('Failed to fetch file');
+      }
+
       pipeline(fileRes, res, (err) => {
         if (err) {
-          console.error('Stream failed:', err);
+          console.error('Stream error:', err);
           res.status(500).end('Download failed');
         }
       });
+    }).on('error', (err) => {
+      console.error('HTTPS stream error:', err);
+      res.status(500).json({ message: 'Download failed', error: err.message });
     });
+
   } catch (error) {
-    console.error('Download failed:', error);
-    res.status(500).json({ message: 'Failed to download material', error: error.message });
+    console.error('Download controller error:', error);
+    res.status(500).json({ message: 'Download failed', error: error.message });
   }
 };
 
