@@ -224,7 +224,10 @@ const getTopContributors = async (req, res) => {
   }
 };
 
-// ✅ Fixed: Cloudinary signed raw file download
+// ✅ Final fixed raw file download
+const https = require('https');
+const { pipeline } = require('stream');
+
 const downloadMaterial = async (req, res) => {
   const { id } = req.params;
 
@@ -238,15 +241,29 @@ const downloadMaterial = async (req, res) => {
       ? originalName
       : `${originalName}${fileExtension}`;
 
-    const signedUrl = cloudinary.utils.private_download_url(
-      `materials/${material.filePublicId}`,
-      'raw',
-      {
-        attachment: filenameWithExtension,
-      }
-    );
+    const fileUrl = cloudinary.url(material.filePublicId, {
+      resource_type: 'raw',
+      secure: true,
+      sign_url: true,
+      type: 'upload'
+    });
 
-    res.redirect(signedUrl);
+    // Set headers manually
+    res.setHeader('Content-Disposition', `attachment; filename="${filenameWithExtension}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+
+    https.get(fileUrl, (fileRes) => {
+      pipeline(fileRes, res, (err) => {
+        if (err) {
+          console.error('❌ Streaming failed:', err);
+          res.status(500).end('Download failed');
+        }
+      });
+    }).on('error', (err) => {
+      console.error('❌ HTTPS request failed:', err);
+      res.status(500).end('Download failed');
+    });
+
   } catch (error) {
     console.error('❌ Signed URL download failed:', error);
     res.status(500).json({ message: 'Failed to download material', error: error.message });

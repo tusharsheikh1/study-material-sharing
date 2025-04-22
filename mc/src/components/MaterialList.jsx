@@ -47,8 +47,8 @@ const groupByType = (materials) => {
 
 const BASE_URL = api.defaults.baseURL.replace('/api', '');
 
+// ✅ Final simplified downloader
 const handleMaterialDownload = (id) => {
-  // Open backend download endpoint, which redirects to Cloudinary
   window.open(`${BASE_URL}/api/materials/download/${id}`, '_blank');
 };
 

@@ -10,7 +10,7 @@ const {
   markMaterialStatus,
   getMaterialStats,
   getTopContributors,
-  downloadMaterial, // ✅ Ensure it's imported
+  downloadMaterial,
 } = require('../controllers/materialController');
 
 const {
@@ -36,44 +36,33 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: folderPath,
-      allowed_formats: undefined,       // ✅ allow all file types
-      use_filename: true,               // ✅ use original filename
-      unique_filename: true,            // ✅ don't randomize filename
-      resource_type: 'raw',             // ✅ support all file types
+      allowed_formats: undefined,
+      use_filename: true,
+      unique_filename: true,
+      resource_type: 'raw',
     };
   },
 });
 
-// 🔧 Multer setup
 const upload = multer({
   storage,
   limits: { fileSize: Infinity },
   fileFilter: (req, file, cb) => {
-    cb(null, true); // ✅ allow everything
+    cb(null, true);
   },
 });
 
 /** ROUTES **/
 
-// ✅ Get all materials
+// ✅ Protected routes
 router.get('/', protect, getMaterials);
-
-// ✅ Upload a new material
 router.post('/', protect, upload.single('file'), uploadMaterial);
-
-// ✅ Delete a material
 router.delete('/:id', protect, deleteMaterial);
-
-// ✅ Toggle material completion status
 router.put('/toggle-status/:id', protect, markMaterialStatus);
 
-// ✅ Get material stats for dashboard
+// ✅ Public routes
 router.get('/stats', getMaterialStats);
-
-// ✅ Get top contributors
 router.get('/top-contributors', getTopContributors);
-
-// ✅ Download material with forced filename
-router.get('/download/:id', protect, downloadMaterial); // ✅ Enabled
+router.get('/download/:id', downloadMaterial); // ✅ PUBLIC — no token needed
 
 module.exports = router;
