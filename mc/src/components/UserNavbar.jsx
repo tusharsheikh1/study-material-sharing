@@ -1,21 +1,17 @@
 import { useContext, useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   FiUser,
   FiLogOut,
-  FiLock,
-  FiMenu,
-  FiUpload,
-  FiFilter,
-  FiHome,
+  FiLock
 } from 'react-icons/fi';
 import AuthContext from '../context/AuthContext';
 import ChangePasswordModal from './ChangePasswordModal';
+import MobileHamburgerMenu from './MobileHamburgerMenu';
 
 const UserNavbar = () => {
   const { user } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef();
@@ -30,7 +26,6 @@ const UserNavbar = () => {
         !dropdownRef.current.contains(event.target)
       ) {
         setOpen(false);
-        setSidebarOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -46,18 +41,8 @@ const UserNavbar = () => {
     <>
       {/* Navbar */}
       <header className="w-full h-16 bg-white/90 backdrop-blur-sm border-b shadow-sm flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-50">
-        {/* Left - Hamburger (mobile only) */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-xl text-gray-700 sm:hidden"
-          >
-            <FiMenu />
-          </button>
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-blue-600">
-            Study Portal
-          </h1>
-        </div>
+        {/* Left - Mobile Hamburger Menu */}
+        <MobileHamburgerMenu />
 
         {/* Right - User avatar */}
         <div className="flex items-center gap-4" ref={dropdownRef}>
@@ -117,45 +102,6 @@ const UserNavbar = () => {
           )}
         </div>
       </header>
-
-      {/* Mobile Sidebar Menu */}
-      {sidebarOpen && (
-        <div className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-40 p-4 sm:hidden">
-          <h2 className="text-lg font-bold text-blue-600 mb-4">Menu</h2>
-
-          <Link
-            to="/user/dashboard"
-            onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 rounded"
-          >
-            <FiHome /> Dashboard
-          </Link>
-
-          <Link
-            to="/user/upload"
-            onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 rounded"
-          >
-            <FiUpload /> Upload
-          </Link>
-
-          <Link
-            to="/user/find"
-            onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 rounded"
-          >
-            <FiFilter /> Find Material
-          </Link>
-
-          <Link
-            to="/user/profile"
-            onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-800 hover:bg-blue-100 rounded"
-          >
-            <FiUser /> Profile
-          </Link>
-        </div>
-      )}
 
       {/* Change Password Modal */}
       {showChangePassword && (
