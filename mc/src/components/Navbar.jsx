@@ -15,7 +15,6 @@ const Navbar = () => {
   const [userApproved, setUserApproved] = useState(false);
   const navigate = useNavigate();
 
-  // Check login
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -25,7 +24,6 @@ const Navbar = () => {
     }
   }, []);
 
-  // Set logo
   useEffect(() => {
     const fetchLogoUrl = async () => {
       try {
@@ -40,7 +38,6 @@ const Navbar = () => {
     fetchLogoUrl();
   }, []);
 
-  // Scroll Effects
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -53,7 +50,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Theme toggle
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
@@ -87,19 +83,17 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Scroll Progress */}
       <div
         className="fixed top-0 left-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 z-[9999] transition-all duration-200"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* Navbar */}
       <nav
         className={`backdrop-blur-md bg-white/60 dark:bg-gray-900/60 border-b border-white/20 
-          dark:border-gray-700 sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-md" : ""}`}
+        dark:border-gray-700 sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-md" : ""}`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Left: Logo + Nav */}
+          {/* Left: Logo */}
           <div className="flex items-center space-x-12">
             <Link to="/" className="flex items-center space-x-3">
               {loadingLogo ? (
@@ -110,6 +104,8 @@ const Navbar = () => {
                 <span className="text-2xl font-bold text-blue-700 dark:text-white">Track Mark</span>
               )}
             </Link>
+
+            {/* Center Nav */}
             <div className="hidden md:flex items-center space-x-8 text-base font-medium text-gray-800 dark:text-gray-100">
               <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</Link>
               <Link to="/faculty" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Faculty</Link>
@@ -118,7 +114,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right: Auth + Theme Toggle */}
+          {/* Right: Auth + Theme */}
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={toggleTheme}
@@ -157,7 +153,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile: Theme + Menu Toggle */}
           <div className="md:hidden flex items-center gap-3">
             <button onClick={toggleTheme}>
               {isDark ? <FiSun className="text-xl text-yellow-400" /> : <FiMoon className="text-xl text-gray-800" />}
@@ -168,7 +164,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Slide Menu */}
+        {/* Mobile Menu */}
         <PublicMobileMenu
           menuOpen={menuOpen}
           setMenuOpen={setMenuOpen}
