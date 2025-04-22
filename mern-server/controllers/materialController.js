@@ -226,7 +226,7 @@ const getTopContributors = async (req, res) => {
   }
 };
 
-// ✅ Final: Secure & consistent download
+/// ✅ Final: Secure & consistent download using signed URL for raw files
 const downloadMaterial = async (req, res) => {
   const { id } = req.params;
 
@@ -234,38 +234,29 @@ const downloadMaterial = async (req, res) => {
     const material = await Material.findById(id);
     if (!material) return res.status(404).json({ message: 'Material not found' });
 
-    const fileUrl = material.fileUrl;
     const originalName = material.title || 'file';
     const fileExtension = path.extname(originalName);
     const filenameWithExtension = originalName.endsWith(fileExtension)
       ? originalName
       : `${originalName}${fileExtension}`;
 
-    res.setHeader('Content-Disposition', `attachment; filename="${filenameWithExtension}"`);
-    res.setHeader('Content-Type', 'application/octet-stream');
-
-    https.get(fileUrl, (fileRes) => {
-      if (fileRes.statusCode !== 200) {
-        console.error('Failed to fetch file from remote source:', fileRes.statusCode);
-        return res.status(fileRes.statusCode).end('Failed to fetch file');
-      }
-
-      pipeline(fileRes, res, (err) => {
-        if (err) {
-          console.error('Stream error:', err);
-          res.status(500).end('Download failed');
-        }
-      });
-    }).on('error', (err) => {
-      console.error('HTTPS stream error:', err);
-      res.status(500).json({ message: 'Download failed', error: err.message });
+    // ✅ Generate a signed Cloudinary URL for raw resource
+    const signedUrl = cloudinary.url(`materials/${material.filePublicId}`, {
+      resource_type: 'raw',
+      secure: true,
+      type: 'upload',
+      sign_url: true,
+      attachment: filenameWithExtension,
     });
 
+    // ✅ Redirect to the signed URL
+    res.redirect(signedUrl);
   } catch (error) {
-    console.error('Download controller error:', error);
-    res.status(500).json({ message: 'Download failed', error: error.message });
+    console.error('❌ Signed URL download failed:', error);
+    res.status(500).json({ message: 'Failed to download material', error: error.message });
   }
 };
+
 
 module.exports = {
   uploadMaterial,
