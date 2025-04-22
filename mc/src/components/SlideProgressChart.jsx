@@ -45,11 +45,11 @@ const SlideProgressChart = ({ slideMaterials, currentUserId }) => {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-8 shadow-md border border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Study Progress Overview</h2>
-        <div className="text-right text-sm text-gray-600 space-y-1">
-          <p>Total Materials: <span className="font-medium text-gray-800">{slideMaterials.length}</span></p>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Study Progress Overview</h2>
+        <div className="text-right text-sm text-gray-600 dark:text-gray-300 space-y-1">
+          <p>Total Materials: <span className="font-medium text-gray-800 dark:text-white">{slideMaterials.length}</span></p>
           <p>
             Completed: <span className="text-green-600 font-semibold">{doneCount}</span> | 
             Pending: <span className="text-red-600 font-semibold">{leftCount}</span>
@@ -73,13 +73,22 @@ const SlideProgressChart = ({ slideMaterials, currentUserId }) => {
               ))}
             </Pie>
             <Tooltip
-              contentStyle={{ borderRadius: '8px', fontSize: '13px', padding: '8px', backgroundColor: '#f9fafb' }}
-              itemStyle={{ color: '#374151' }}
+              contentStyle={{
+                borderRadius: '8px',
+                fontSize: '13px',
+                padding: '8px',
+                backgroundColor: '#1f2937', // dark:bg-gray-800
+                color: '#f9fafb', // light text
+                borderColor: '#4b5563' // dark:border-gray-600
+              }}
+              itemStyle={{ color: '#f3f4f6' }}
+              labelStyle={{ color: '#9ca3af' }}
+              wrapperStyle={{ zIndex: 50 }}
             />
-            <Legend iconType="circle" verticalAlign="bottom" height={36} />
+            <Legend iconType="circle" verticalAlign="bottom" height={36} wrapperStyle={{ color: 'inherit' }} />
           </PieChart>
         </ResponsiveContainer>
-        <p className="mt-2 text-base font-medium text-blue-600 text-center">{message}</p>
+        <p className="mt-2 text-base font-medium text-blue-600 dark:text-blue-400 text-center">{message}</p>
       </div>
     </div>
   );

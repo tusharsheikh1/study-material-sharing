@@ -34,7 +34,7 @@ const UserSidebar = () => {
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="hidden sm:flex w-16 sm:w-52 bg-white border-r h-screen sticky top-0 z-40 flex-col justify-between"
+      className="hidden sm:flex w-16 sm:w-52 bg-white dark:bg-gray-900 border-r dark:border-gray-700 h-screen sticky top-0 z-40 flex-col justify-between"
     >
       {/* Logo */}
       <div className="px-4 pt-4">
@@ -46,7 +46,7 @@ const UserSidebar = () => {
             style={{ width: '180px', height: '50px' }}
           />
         ) : (
-          <div className="w-[180px] h-[50px] bg-gray-200 rounded mb-6" />
+          <div className="w-[180px] h-[50px] bg-gray-200 dark:bg-gray-700 rounded mb-6" />
         )}
       </div>
 
@@ -59,8 +59,8 @@ const UserSidebar = () => {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 text-sm rounded-md transition ${
                 isActive
-                  ? 'bg-blue-50 text-blue-600 font-semibold'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-yellow-400 font-semibold'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`
             }
           >
@@ -77,7 +77,7 @@ const UserSidebar = () => {
             localStorage.clear();
             window.location.href = '/login';
           }}
-          className="flex items-center gap-3 w-full text-sm text-red-500 hover:bg-red-50 p-2 rounded transition"
+          className="flex items-center gap-3 w-full text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900 p-2 rounded transition"
         >
           <FiLogOut />
           <span className="hidden sm:inline">Logout</span>

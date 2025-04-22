@@ -1,10 +1,11 @@
 import React from "react";
-import booksVector from "../assets/booksVector.png";
+import Lottie from "lottie-react";
+import studentLottie from "../assets/lottie/student.json"; // ✅ Lottie animation
 import StatsSection from "../components/StatsSection";
 import HomepageTopContributors from "../components/HomepageTopContributors";
 import Testimonial from "../components/Testimonial";
 import WhyChooseSection from "../components/WhyChooseSection";
-import SignupCTA from "../components/SignupCTA"; // ✅ New import
+import SignupCTA from "../components/SignupCTA";
 
 const Home = () => {
   return (
@@ -37,11 +38,10 @@ const Home = () => {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <img
-            src={booksVector}
-            alt="Books and Students Vector"
-            className="w-full max-w-md object-contain drop-shadow-2xl animate-fade-in"
-            loading="lazy"
+          <Lottie
+            animationData={studentLottie}
+            loop
+            className="w-full max-w-md drop-shadow-2xl animate-fade-in"
           />
         </div>
       </div>

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import ConfirmationPopup from './ConfirmationPopup';
 import MaterialUploadForm from './MaterialUploadForm';
 import UploadedMaterialList from './UploadedMaterialList';
-import { ImSpinner8 } from 'react-icons/im'; // ✅ Spinner icon added
+import { ImSpinner8 } from 'react-icons/im';
 
 const NotesOrQuestionUpload = ({ onUploadSuccess }) => {
   const { user } = useContext(AuthContext);
@@ -135,9 +135,9 @@ const NotesOrQuestionUpload = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10">
+    <div className="max-w-5xl mx-auto space-y-10 text-gray-800 dark:text-gray-100">
       {uploading && (
-        <div className="flex justify-center items-center gap-2 text-blue-600 font-medium">
+        <div className="flex justify-center items-center gap-2 text-blue-600 dark:text-yellow-400 font-medium">
           <ImSpinner8 className="animate-spin" size={24} />
           Uploading... {uploadProgress}%
         </div>
@@ -156,9 +156,9 @@ const NotesOrQuestionUpload = ({ onUploadSuccess }) => {
       />
 
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold text-gray-800">📂 Your Uploads</h3>
+        <h3 className="text-2xl font-bold text-gray-800 dark:text-white">📂 Your Uploads</h3>
         {loadingUploads ? (
-          <p className="text-blue-500">Loading uploads...</p>
+          <p className="text-blue-500 dark:text-blue-400">Loading uploads...</p>
         ) : (
           <UploadedMaterialList
             uploads={uploads}

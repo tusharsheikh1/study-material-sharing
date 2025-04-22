@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import MaterialFilter from '../components/MaterialFilter';
-import FilteredMaterialList from '../components/FilteredMaterialList'; // ✅ Updated import
+import FilteredMaterialList from '../components/FilteredMaterialList';
 import api from '../utils/api';
 
 const FindMaterials = () => {
@@ -44,14 +44,14 @@ const FindMaterials = () => {
   }, [filters, sortOrder]);
 
   return (
-    <div className="max-w-5xl mx-auto mt-6 space-y-6">
+    <div className="max-w-5xl mx-auto mt-6 space-y-6 text-gray-800 dark:text-gray-100">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-blue-600">🔍 Find Materials</h2>
+        <h2 className="text-2xl font-bold text-blue-600 dark:text-yellow-400">🔍 Find Materials</h2>
         <div className="flex items-center gap-4">
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-sm rounded-md px-3 py-2 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="desc">📅 Newest First</option>
             <option value="asc">📁 Oldest First</option>
@@ -59,7 +59,7 @@ const FindMaterials = () => {
 
           <button
             onClick={handleClearFilters}
-            className="bg-gray-100 hover:bg-gray-200 text-sm px-4 py-2 rounded-md text-gray-700 transition"
+            className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 transition"
           >
             Clear Filters
           </button>
@@ -69,9 +69,11 @@ const FindMaterials = () => {
       <MaterialFilter filters={filters} setFilters={setFilters} />
 
       {loading ? (
-        <div className="text-center text-gray-500 py-10">Loading materials...</div>
+        <div className="text-center text-gray-500 dark:text-gray-400 py-10">
+          Loading materials...
+        </div>
       ) : (
-        <FilteredMaterialList materials={materials} /> // ✅ Replaced here
+        <FilteredMaterialList materials={materials} />
       )}
     </div>
   );

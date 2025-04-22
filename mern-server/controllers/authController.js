@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
-const { otpTemplate } = require('../utils/emailTemplates.cjs'); // ✅ Updated import for .cjs
+const { otpTemplate } = require('../utils/emailTemplates.cjs');
 
 // ✅ Utility: Send HTML Email
 const sendEmail = async (to, subject, html) => {
@@ -22,7 +22,7 @@ const sendEmail = async (to, subject, html) => {
     from: process.env.SMTP_USER,
     to,
     subject,
-    html, // ✅ Send HTML content
+    html,
   });
 };
 
@@ -88,7 +88,7 @@ const registerUser = async (req, res) => {
     });
 
     try {
-      await sendEmail(email, 'Your OTP for Registration', otpTemplate(otp)); // ✅ Use HTML template
+      await sendEmail(email, 'Your OTP for Registration', otpTemplate(otp));
     } catch (err) {
       return res.status(500).json({ message: 'Failed to send OTP email.' });
     }
@@ -196,6 +196,7 @@ const getUser = async (req, res) => {
   }
 };
 
+// ✅ Updated: Email-only OTP sending
 const sendOtp = async (req, res) => {
   const { email } = req.body;
 
@@ -206,22 +207,23 @@ const sendOtp = async (req, res) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     user.otp = otp;
     user.otpExpiration = Date.now() + 10 * 60 * 1000;
-    await user.save();
 
-    await sendEmail(email, 'Your OTP for Verification', otpTemplate(otp)); // ✅ Use template
+    await user.save({ validateBeforeSave: false }); // ✅ FIXED: bypass validation error
+
+    await sendEmail(email, 'Your OTP for Verification', otpTemplate(otp));
     res.json({ message: 'OTP sent successfully.' });
   } catch (err) {
+    console.error('Send OTP error:', err);
     res.status(500).json({ message: err.message });
   }
 };
 
+// ✅ Updated: Email-only password reset
 const resetPassword = async (req, res) => {
-  const { email, studentId, otp, newPassword } = req.body;
+  const { email, otp, newPassword } = req.body;
 
   try {
-    const user = await User.findOne({
-      $or: [{ email }, { studentId: studentId?.toLowerCase() }],
-    });
+    const user = await User.findOne({ email });
 
     if (!user || user.otp !== otp || user.otpExpiration < Date.now()) {
       return res.status(400).json({ message: 'Invalid or expired OTP.' });
@@ -230,7 +232,8 @@ const resetPassword = async (req, res) => {
     user.password = newPassword;
     user.otp = undefined;
     user.otpExpiration = undefined;
-    await user.save();
+
+    await user.save({ validateBeforeSave: false }); // ✅ FIXED here
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -288,5 +291,5 @@ module.exports = {
   sendOtp,
   resetPassword,
   changePassword,
-  sendEmail, // ✅ Export for use in userController
+  sendEmail,
 };

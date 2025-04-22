@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }) => {
   // ✅ Register using studentId instead of phone
   const register = async ({ fullName, email, studentId, password, phoneNumber, role, semester, batch }) => {
     try {
-      // Ensure 'faculty' is excluded
       if (role === 'faculty') {
         throw new Error("Faculty role is not allowed.");
       }
@@ -46,9 +45,8 @@ export const AuthProvider = ({ children }) => {
         batch,
       };
 
-      // Include studentId only if the role is not faculty and studentId is provided
       if (role !== "faculty" && studentId) {
-        registrationData.studentId = studentId.toLowerCase();  // Only convert to lowercase if studentId exists
+        registrationData.studentId = studentId.toLowerCase();
       }
 
       await api.post('/auth/register', registrationData);
@@ -76,35 +74,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Verify OTP using email or studentId
-  const verifyOtp = async ({ email, studentId, otp }) => {
-    try {
-      // Only process studentId if it exists
-      if (studentId) {
-        studentId = studentId.toLowerCase(); // Only use toLowerCase if studentId exists
-      }
-      const { data } = await api.post('/auth/verify-otp', {
-        email,
-        studentId,
-        otp,
-      });
-      localStorage.setItem('user', JSON.stringify(data.user));
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
-      return true;
-    } catch (error) {
-      console.error('OTP verification error:', error.response?.data?.message || error.message);
-      throw new Error(error.response?.data?.message || 'OTP verification failed');
-    }
-  };
+  // ✅ Verify OTP using email only
+const verifyOtp = async ({ email, otp }) => {
+  try {
+    const { data } = await api.post('/auth/verify-otp', {
+      email,
+      otp,
+    });
+    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
+    return true;
+  } catch (error) {
+    console.error('OTP verification error:', error.response?.data?.message || error.message);
+    throw new Error(error.response?.data?.message || 'OTP verification failed');
+  }
+};
 
-  // ✅ Send OTP to email or studentId
-  const sendOtp = async ({ email, studentId }) => {
+  // ✅ Send OTP via email only
+  const sendOtp = async ({ email }) => {
     try {
-      await api.post('/auth/send-otp', {
-        email,
-        studentId,
-      });
+      await api.post('/auth/send-otp', { email });
       return true;
     } catch (error) {
       console.error('Send OTP error:', error.response?.data?.message || error.message);
@@ -112,12 +102,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Reset password using studentId or email
-  const resetPassword = async ({ email, studentId, otp, newPassword }) => {
+  // ✅ Reset password using email only
+  const resetPassword = async ({ email, otp, newPassword }) => {
     try {
       const { data } = await api.post('/auth/reset-password', {
         email,
-        studentId,
         otp,
         newPassword,
       });

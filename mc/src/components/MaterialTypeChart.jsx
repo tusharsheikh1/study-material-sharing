@@ -72,12 +72,12 @@ const MaterialTypeChart = () => {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: '#1f2937',
-                borderColor: '#4b5563',
-                color: '#f3f4f6',
+                backgroundColor: '#1f2937', // gray-800
+                borderColor: '#4b5563',     // gray-600
+                color: '#f3f4f6',           // gray-100
               }}
+              labelStyle={{ color: '#9ca3af' }} // gray-400
               wrapperStyle={{ zIndex: 50 }}
-              labelStyle={{ color: '#9ca3af' }}
             />
             <Legend
               layout="horizontal"

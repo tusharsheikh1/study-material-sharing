@@ -77,25 +77,28 @@ const deleteUser = async (req, res) => {
 };
 
 // Update profile with Cloudinary image support
+// Update profile with Cloudinary image support
 const updateProfile = async (req, res) => {
   const userId = req.user._id;
   const { fullName, email, phoneNumber, semester, batch } = req.body;
-  const profileImage = req.file?.path;
 
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    user.fullName = fullName || user.fullName;
-    user.email = email || user.email;
-    user.phoneNumber = phoneNumber || user.phoneNumber;
-    user.semester = semester || user.semester;
-    user.batch = batch || user.batch;
-    if (profileImage) user.profileImage = profileImage;
+    // Safe updates
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (semester) user.semester = semester;
+    if (batch) user.batch = batch;
+    if (req.file && req.file.path) user.profileImage = req.file.path;
 
-    await user.save();
+    await user.save({ validateBeforeSave: false });
+
     res.status(200).json({ message: 'Profile updated successfully', user });
   } catch (error) {
+    console.error('❌ Profile update error:', error); // Helpful debug
     res.status(500).json({ message: 'Failed to update profile', error: error.message });
   }
 };

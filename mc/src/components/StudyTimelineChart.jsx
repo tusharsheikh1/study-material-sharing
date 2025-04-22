@@ -51,13 +51,13 @@ const StudyTimelineChart = ({ materials, currentUserId }) => {
   }, [materials, currentUserId, viewMode]);
 
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-800">📅 Study Timeline Overview</h2>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">📅 Study Timeline Overview</h2>
         <select
           value={viewMode}
           onChange={(e) => setViewMode(e.target.value)}
-          className="border border-gray-300 text-sm rounded-md p-1 px-2 text-gray-700"
+          className="border border-gray-300 dark:border-gray-600 text-sm rounded-md p-1 px-2 text-gray-700 dark:text-gray-100 dark:bg-gray-900"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -76,16 +76,29 @@ const StudyTimelineChart = ({ materials, currentUserId }) => {
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
           <XAxis
             dataKey="date"
             angle={-35}
             textAnchor="end"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: '#374151' }}
             height={60}
           />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-          <Tooltip contentStyle={{ borderRadius: 10, fontSize: 13 }} />
+          <YAxis
+            allowDecimals={false}
+            tick={{ fontSize: 12, fill: '#374151' }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#1f2937', // dark gray-800
+              borderColor: '#4b5563',     // dark gray-600
+              color: '#f3f4f6',           // light
+              borderRadius: 10,
+              fontSize: 13,
+            }}
+            labelStyle={{ color: '#9ca3af' }}
+            wrapperStyle={{ zIndex: 50 }}
+          />
           <Area
             type="monotone"
             dataKey="count"

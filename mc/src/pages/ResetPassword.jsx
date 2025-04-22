@@ -14,13 +14,12 @@ const ResetPassword = () => {
   const location = useLocation();
 
   const email = location.state?.email;
-  const studentId = location.state?.studentId;
 
   useEffect(() => {
-    if (!email && !studentId) {
+    if (!email) {
       navigate("/forgot-password");
     }
-  }, [email, studentId, navigate]);
+  }, [email, navigate]);
 
   useEffect(() => {
     if (isResendDisabled) {
@@ -40,7 +39,7 @@ const ResetPassword = () => {
 
   const handleResendOtp = async () => {
     try {
-      await api.post("/auth/send-otp", { email, studentId });
+      await api.post("/auth/send-otp", { email });
       toast.success("OTP resent successfully!");
       setIsResendDisabled(true);
       setTimer(60);
@@ -54,7 +53,6 @@ const ResetPassword = () => {
     try {
       const { data } = await api.post("/auth/reset-password", {
         email,
-        studentId,
         otp,
         newPassword,
       });
@@ -76,7 +74,7 @@ const ResetPassword = () => {
           Reset Password
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter the OTP sent to your email or student ID and set a new password.
+          Enter the OTP sent to your email and set a new password.
         </p>
         {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
 

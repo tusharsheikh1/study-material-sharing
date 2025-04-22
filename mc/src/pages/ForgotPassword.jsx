@@ -5,36 +5,26 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ForgotPassword = () => {
-  const [useEmail, setUseEmail] = useState(true);
   const [email, setEmail] = useState("");
-  const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (useEmail && !email) {
+    if (!email) {
       setError("Please provide an email address.");
       toast.error("Email is required.");
       return;
     }
-    if (!useEmail && !studentId) {
-      setError("Please provide a Student ID.");
-      toast.error("Student ID is required.");
-      return;
-    }
 
     try {
-      await api.post("/auth/send-otp", {
-        email: useEmail ? email : undefined,
-        studentId: !useEmail ? studentId : undefined,
-      });
+      await api.post("/auth/send-otp", { email });
 
       setSuccess(true);
       toast.success("OTP sent successfully! Redirecting...");
       setTimeout(() => {
-        navigate("/reset-password", { state: { email, studentId } });
+        navigate("/reset-password", { state: { email } });
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Error sending OTP");
@@ -50,7 +40,7 @@ const ForgotPassword = () => {
           Forgot Password
         </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Enter your Email or Student ID to receive a one-time password (OTP) to reset your password.
+          Enter your email address to receive a one-time password (OTP) to reset your password.
         </p>
         {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
         {success && (
@@ -60,62 +50,21 @@ const ForgotPassword = () => {
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          <div className="flex justify-center space-x-4">
-            <button
-              type="button"
-              onClick={() => setUseEmail(true)}
-              className={`px-4 py-2 rounded-lg ${
-                useEmail
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Use Email
-            </button>
-            <button
-              type="button"
-              onClick={() => setUseEmail(false)}
-              className={`px-4 py-2 rounded-lg ${
-                !useEmail
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Use Student ID
-            </button>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your email"
+              required
+            />
           </div>
-
-          {useEmail ? (
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email"
-              />
-            </div>
-          ) : (
-            <div>
-              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
-                Student ID
-              </label>
-              <input
-                type="text"
-                id="studentId"
-                name="studentId"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                className="w-full px-4 py-3 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your Student ID"
-              />
-            </div>
-          )}
 
           <button
             type="submit"
