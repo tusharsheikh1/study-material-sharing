@@ -36,13 +36,14 @@ const Footer = () => {
 
         {/* Contact */}
         <div className="animate-slide-up delay-100">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">📞 Contact Info</h4>
-          <ul className="space-y-2">
-            <li>Email: <a href="mailto:marketing@jnu.ac.bd" className="footer-link">marketing@jnu.ac.bd</a></li>
-            <li>Phone: <a href="tel:+8801234567890" className="footer-link">+880 1234 567 890</a></li>
-            <li>Office: Dept. of Marketing, Jagannath University</li>
-            <li>Admin: <a href="mailto:admin@portal.com" className="footer-link">admin@portal.com</a></li>
-          </ul>
+          {/* Contact */}
+<div className="animate-slide-up delay-100">
+  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">📍 Address</h4>
+  <ul className="space-y-2">
+    <li>Dept. of Marketing, Jagannath University</li>
+  </ul>
+</div>
+
         </div>
 
         {/* Quick Links */}
@@ -68,7 +69,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-300 dark:border-gray-700 text-center py-6 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-        <p>💻 Built with ❤️ by Final Year Project Team — Department of Marketing</p>
+        <p>💻 Built with ❤️ by Final Year Student (Mkt-15 Batch) — Department of Marketing</p>
         <p className="mt-1">
           &copy; {new Date().getFullYear()} Jagannath University. All rights reserved. <br />
           👨‍💻 Developed by{" "}

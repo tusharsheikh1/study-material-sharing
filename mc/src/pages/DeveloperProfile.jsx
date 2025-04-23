@@ -27,7 +27,7 @@ const DeveloperProfile = () => {
         <div className="relative w-48 h-48 mb-6">
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 animate-spin-slow blur-md opacity-30" />
           <img
-            src="https://scontent.fzyl2-2.fna.fbcdn.net/v/t39.30808-6/415535995_337021575790306_1033942528636397166_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF7hI12_GQcXZAn78M2tEHQQQc4umvpQaBBBzi6a-lBoKsDMV4nuG1T5sRpgfijJnDGqV1Nt2rj83IIwlGAc5a5&_nc_ohc=qEQAQGX2j4QQ7kNvwGk9HRs&_nc_oc=Adm5RdPI_grCZ9RPDVn43O4RzmeKn_3sg7-Iy7xdNywGohVziBUah8ZLiinE834lw58&_nc_zt=23&_nc_ht=scontent.fzyl2-2.fna&_nc_gid=ir68IQGVV_pvk35DupbMqA&oh=00_AfGktAKLlQtbIYJQ-8C05nj-mHRaQGwTLJjog8pplqLdOQ&oe=6807C5CD"
+            src="https://scontent.fdac2-1.fna.fbcdn.net/v/t39.30808-1/415535995_337021575790306_1033942528636397166_n.jpg?stp=c0.8.746.746a_dst-jpg_s200x200_tt6&_nc_cat=110&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeF7hI12_GQcXZAn78M2tEHQQQc4umvpQaBBBzi6a-lBoKsDMV4nuG1T5sRpgfijJnDGqV1Nt2rj83IIwlGAc5a5&_nc_ohc=rlGFpIyMFXMQ7kNvwF64R_u&_nc_oc=AdmGNeIXZ8oxNPzJJ_tfnHx04jARWl8rcKQfnT3aAJli50PaR5xEtssTgz8O4c79cSU_QWpeVZ9l_epTHeJRnLBg&_nc_zt=24&_nc_ht=scontent.fdac2-1.fna&_nc_gid=iOTuWYSYqgmFARpiRmWDHQ&oh=00_AfHcnd2fwegkEmCV5xmQDow5eMXwavLc7jNU0RFmeQDoDA&oe=680E784B"
             alt="Tushar Sheikh"
             className="relative w-48 h-48 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-2xl"
           />

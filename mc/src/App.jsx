@@ -21,8 +21,13 @@ import WaitingApproval from './pages/WaitingApproval';
 import Leaderboard from './pages/Leaderboard';
 import DeveloperProfile from './pages/DeveloperProfile';
 import PublicFacultyPage from './pages/PublicFacultyPage';
-import PublicStaffPage from './pages/PublicStaffPage'; // ✅ NEWLY ADDED
+import PublicStaffPage from './pages/PublicStaffPage';
 import DocumentPage from './pages/DocumentPage';
+import About from './pages/About'; // ✅ NEWLY ADDED
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import HelpCenter from './pages/HelpCenter';
+import Resources from './pages/Resources';
 
 // Admin
 import AdminRoute from './components/AdminRoute';
@@ -91,8 +96,14 @@ const Layout = () => {
           <Route path="/leaderboard" element={<RouteWrapper><Leaderboard /></RouteWrapper>} />
           <Route path="/developers" element={<RouteWrapper><DeveloperProfile /></RouteWrapper>} />
           <Route path="/faculty" element={<RouteWrapper><PublicFacultyPage /></RouteWrapper>} />
-          <Route path="/staff" element={<RouteWrapper><PublicStaffPage /></RouteWrapper>} /> {/* ✅ NEW ROUTE */}
+          <Route path="/staff" element={<RouteWrapper><PublicStaffPage /></RouteWrapper>} />
           <Route path="/preview" element={<RouteWrapper><DocumentPage /></RouteWrapper>} />
+          <Route path="/about" element={<RouteWrapper><About /></RouteWrapper>} /> {/* ✅ NEW ROUTE */}
+          <Route path="/privacy-policy" element={<RouteWrapper><PrivacyPolicy /></RouteWrapper>} />
+          <Route path="/terms" element={<RouteWrapper><TermsConditions /></RouteWrapper>} />
+          <Route path="/help-center" element={<RouteWrapper><HelpCenter /></RouteWrapper>} />
+          <Route path="/resources" element={<RouteWrapper><Resources /></RouteWrapper>} />
+
 
           {/* Admin Protected Routes */}
           <Route

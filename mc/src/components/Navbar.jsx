@@ -107,10 +107,12 @@ const Navbar = () => {
 
             {/* Center Nav */}
             <div className="hidden md:flex items-center space-x-8 text-base font-medium text-gray-800 dark:text-gray-100">
-              <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</Link>
-              <Link to="/faculty" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Faculty</Link>
-              <Link to="/staff" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Staff</Link>
-              <Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About Us</Link>
+            <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</Link>
+<Link to="/faculty" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Faculty</Link>
+<Link to="/staff" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Staff</Link>
+<Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About Us</Link>
+<Link to="/resources" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Resources</Link> {/* ✅ NEW LINK */}
+
             </div>
           </div>
 
