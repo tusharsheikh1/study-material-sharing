@@ -7,6 +7,7 @@ import {
   FiInfo,
   FiLogIn,
   FiUserPlus,
+  FiBookOpen, // ✅ added for Resources icon
 } from "react-icons/fi";
 
 const PublicMobileMenu = ({
@@ -55,6 +56,13 @@ const PublicMobileMenu = ({
             className="flex items-center gap-3 hover:text-blue-500 dark:hover:text-blue-400 transition"
           >
             <FiInfo /> About Us
+          </Link>
+          <Link
+            to="/resources"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 hover:text-blue-500 dark:hover:text-blue-400 transition"
+          >
+            <FiBookOpen /> Resources
           </Link>
 
           <hr className="border-white/20 dark:border-gray-600" />
