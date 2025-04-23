@@ -12,6 +12,8 @@ const AuthFormFields = ({
   loading,
   batchOptions,
   semesterOptions,
+  rememberMe,         // ✅ Added
+  setRememberMe       // ✅ Added
 }) => {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
@@ -195,6 +197,20 @@ const AuthFormFields = ({
                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
               </button>
             </div>
+          </div>
+
+          {/* ✅ Remember Me Checkbox */}
+          <div className="flex items-center">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 dark:text-gray-200">
+              Remember Me
+            </label>
           </div>
         </>
       )}

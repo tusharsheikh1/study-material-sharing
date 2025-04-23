@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { getMaterials } from '../../utils/api';
 import api from '../../utils/api';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import GlobalSpinner from '../../components/GlobalSpinner'; // ✅ Added
 
 const AllMaterialManagement = () => {
   const [materials, setMaterials] = useState([]);
@@ -22,7 +23,7 @@ const AllMaterialManagement = () => {
       const res = await getMaterials();
       setMaterials(res.data);
     } catch (err) {
-      toast.error('Failed to fetch materials');
+      toast.error('❌ Failed to fetch materials');
     } finally {
       setLoading(false);
     }
@@ -32,10 +33,10 @@ const AllMaterialManagement = () => {
     if (!window.confirm('Are you sure you want to delete this material?')) return;
     try {
       await api.delete(`/materials/${id}`);
-      toast.success('Material deleted');
+      toast.success('✅ Material deleted');
       fetchMaterials();
     } catch (err) {
-      toast.error('Delete failed');
+      toast.error('❌ Delete failed');
     }
   };
 
@@ -62,7 +63,9 @@ const AllMaterialManagement = () => {
   const groupedMaterials = groupMaterials();
 
   const Chevron = ({ isOpen }) => (
-    <span className="transition-transform duration-300">{isOpen ? <FaChevronDown /> : <FaChevronRight />}</span>
+    <span className="transition-transform duration-300">
+      {isOpen ? <FaChevronDown /> : <FaChevronRight />}
+    </span>
   );
 
   return (
@@ -70,7 +73,7 @@ const AllMaterialManagement = () => {
       <h1 className="text-3xl font-bold mb-8">📚 Study Material Manager</h1>
 
       {loading ? (
-        <p className="text-center text-gray-500 dark:text-gray-400">Loading materials...</p>
+        <GlobalSpinner /> // ✅ Global spinner used
       ) : Object.keys(groupedMaterials).length === 0 ? (
         <p className="text-center text-green-500 dark:text-green-400">✅ No materials found.</p>
       ) : (

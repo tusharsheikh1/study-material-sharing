@@ -1,30 +1,32 @@
 import { useEffect, useState } from 'react';
 import api from '../../utils/api';
 import { toast } from 'react-toastify';
+import GlobalSpinner from '../../components/GlobalSpinner'; // ✅ Import GlobalSpinner
 
 const RoleAssignment = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
+    setLoading(true); // ✅ Start spinner
     try {
       const res = await api.get('/users');
       const students = res.data.filter((u) => u.role === 'student' && u.approved);
       setUsers(students);
     } catch (err) {
-      toast.error('Failed to fetch users');
+      toast.error('❌ Failed to fetch users');
     } finally {
-      setLoading(false);
+      setLoading(false); // ✅ Stop spinner
     }
   };
 
   const handleChangeRole = async (id, newRole) => {
     try {
       await api.patch(`/users/role/${id}`, { role: newRole });
-      toast.success(`Role updated to ${newRole}`);
+      toast.success(`✅ Role updated to ${newRole}`);
       setUsers((prev) => prev.filter((u) => u._id !== id));
     } catch (err) {
-      toast.error('Failed to update role');
+      toast.error('❌ Failed to update role');
     }
   };
 
@@ -37,9 +39,11 @@ const RoleAssignment = () => {
       <h1 className="text-2xl font-bold mb-4">🎓 Promote Student to CR / Faculty</h1>
 
       {loading ? (
-        <p className="text-center text-gray-500 dark:text-gray-300">Loading approved students...</p>
+        <GlobalSpinner /> // ✅ Show global spinner
       ) : users.length === 0 ? (
-        <p className="text-center text-green-500 dark:text-green-400">✅ No students available for promotion.</p>
+        <p className="text-center text-green-500 dark:text-green-400">
+          ✅ No students available for promotion.
+        </p>
       ) : (
         <div className="space-y-4">
           {users.map((user) => (
@@ -50,7 +54,9 @@ const RoleAssignment = () => {
               <div>
                 <p className="font-semibold text-lg text-gray-800 dark:text-white">{user.fullName}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Semester: {user.semester} | Batch: {user.batch}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Semester: {user.semester} | Batch: {user.batch}
+                </p>
               </div>
 
               <div className="flex gap-3 mt-4 md:mt-0">

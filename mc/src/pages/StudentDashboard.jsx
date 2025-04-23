@@ -4,6 +4,7 @@ import api from '../utils/api';
 import MaterialList from '../components/MaterialList';
 import SlideProgressChart from '../components/SlideProgressChart';
 import StudyTimelineChart from '../components/StudyTimelineChart';
+import GlobalSpinner from '../components/GlobalSpinner'; // ✅ Import spinner
 
 const StudentDashboard = () => {
   const { user } = useContext(AuthContext);
@@ -38,8 +39,23 @@ const StudentDashboard = () => {
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto bg-white dark:bg-gray-900 min-h-screen">
+      {loading && <GlobalSpinner />} {/* ✅ Spinner instead of text */}
+
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">📚 My Study Materials</h1>
+
+      {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
+
+      {user.role !== 'faculty' && <MaterialList materials={materials} />}
+
+      {user.role === 'faculty' && (
+        <p className="text-lg text-gray-700 dark:text-gray-300">
+          Welcome, Faculty! You have upload access only.
+        </p>
+      )}
+
+      {/* ✅ Charts moved below material list */}
       {user.role !== 'faculty' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <SlideProgressChart
             slideMaterials={materials.filter(m => m.materialType === 'slide')}
             currentUserId={user._id}
@@ -50,21 +66,6 @@ const StudentDashboard = () => {
             currentUserId={user._id}
           />
         </div>
-      )}
-
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">📚 My Study Materials</h1>
-
-      {/* Loading and Error States */}
-      {loading && <p className="text-blue-500 dark:text-blue-400">Loading materials...</p>}
-      {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
-
-      {/* Material List */}
-      {user.role !== 'faculty' && <MaterialList materials={materials} />}
-
-      {user.role === 'faculty' && (
-        <p className="text-lg text-gray-700 dark:text-gray-300">
-          Welcome, Faculty! You have upload access only.
-        </p>
       )}
     </div>
   );

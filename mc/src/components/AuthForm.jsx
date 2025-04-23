@@ -29,12 +29,26 @@ const AuthForm = ({ type }) => {
   const [logoUrl, setLogoUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // ✅ Added
 
   const { login, register, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  // ✅ Load saved credentials
+  useEffect(() => {
+    const savedLogin = JSON.parse(localStorage.getItem("rememberedLogin"));
+    if (savedLogin) {
+      setFormData((prev) => ({
+        ...prev,
+        emailOrId: savedLogin.emailOrId || "",
+        password: savedLogin.password || "",
+      }));
+      setRememberMe(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -68,6 +82,19 @@ const AuthForm = ({ type }) => {
             toast.error("User data not found.");
             return;
           }
+
+          if (rememberMe) {
+            localStorage.setItem(
+              "rememberedLogin",
+              JSON.stringify({
+                emailOrId: formData.emailOrId,
+                password: formData.password,
+              })
+            );
+          } else {
+            localStorage.removeItem("rememberedLogin");
+          }
+
           const storedUser = JSON.parse(storedUserRaw);
           setUser(storedUser);
           if (!storedUser.approved) {
@@ -162,6 +189,8 @@ const AuthForm = ({ type }) => {
           loading={loading}
           batchOptions={batchOptions}
           semesterOptions={semesterOptions}
+          rememberMe={rememberMe}               // ✅ Pass down
+          setRememberMe={setRememberMe}         // ✅ Pass down
         />
 
         <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
