@@ -6,8 +6,12 @@ import HomepageTopContributors from "../components/HomepageTopContributors";
 import Testimonial from "../components/Testimonial";
 import WhyChooseSection from "../components/WhyChooseSection";
 import SignupCTA from "../components/SignupCTA";
+import { LayoutDashboard } from "lucide-react";
 
 const Home = () => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const isLoggedIn = typeof window !== "undefined" && localStorage.getItem("token");
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 px-4">
       {/* Hero Section */}
@@ -60,6 +64,19 @@ const Home = () => {
 
       {/* Signup Call to Action */}
       <SignupCTA />
+
+      {/* Sticky Go to Dashboard button for logged-in mobile users */}
+      {isMobile && isLoggedIn && (
+  <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden">
+    <a
+      href="/user/dashboard"
+      className="flex items-center justify-center gap-2 px-6 py-3 rounded-full shadow-xl backdrop-blur-md bg-white/20 dark:bg-gray-800/30 text-blue-800 dark:text-white font-semibold border border-blue-300 dark:border-gray-600 hover:bg-white/30 hover:dark:bg-gray-700/40 transition-all duration-300"
+    >
+      <LayoutDashboard className="w-5 h-5" />
+      Go to Dashboard
+    </a>
+  </div>
+)}
     </div>
   );
 };
