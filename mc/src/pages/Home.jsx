@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
@@ -23,6 +22,18 @@ import {
   MessageCircle,
   Share2
 } from "lucide-react";
+
+// Import API functions
+import {
+  getPosts,
+  getTrendingPosts,
+  createPost,
+  likePost,
+  commentOnPost,
+  sharePost,
+  deletePost,
+  uploadMedia
+} from "../utils/api.jsx";
 
 const Home = () => {
   const { user: currentUser } = useContext(AuthContext);
@@ -81,16 +92,8 @@ const Home = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setPosts([]);
-        return;
-      }
-
-      const response = await axios.get("/api/posts", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const response = await getPosts();
+      
       // Ensure response.data is an array
       const postsData = Array.isArray(response.data) ? response.data : [];
       setPosts(postsData);
@@ -104,16 +107,8 @@ const Home = () => {
 
   const fetchTrendingPosts = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setTrendingPosts([]);
-        return;
-      }
-
-      const response = await axios.get("/api/posts/trending", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const response = await getTrendingPosts();
+      
       // Ensure response.data is an array and limit to 3 items
       const trendingData = Array.isArray(response.data) ? response.data.slice(0, 3) : [];
       setTrendingPosts(trendingData);
@@ -132,40 +127,24 @@ const Home = () => {
 
   const handleCreatePost = async (postData) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
       // First upload media files if any
       const uploadedMedia = [];
       if (postData.media && Array.isArray(postData.media) && postData.media.length > 0) {
         for (const mediaItem of postData.media) {
-          const formData = new FormData();
-          formData.append('file', mediaItem.file);
-          
-          const uploadResponse = await axios.post('/api/media/upload', formData, {
-            headers: { 
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data'
-            },
-          });
-          
+          const uploadResponse = await uploadMedia(mediaItem.file);
           uploadedMedia.push(uploadResponse.data.url);
         }
       }
 
       // Create post with uploaded media URLs
-      const response = await axios.post(
-        "/api/posts",
-        {
-          content: postData.content,
-          media: uploadedMedia,
-          privacy: postData.privacy,
-          location: postData.location,
-          tags: postData.tags,
-          feeling: postData.feeling
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await createPost({
+        content: postData.content,
+        media: uploadedMedia,
+        privacy: postData.privacy,
+        location: postData.location,
+        tags: postData.tags,
+        feeling: postData.feeling
+      });
 
       // Add new post to the beginning of posts array - ensure posts is array
       const currentPosts = Array.isArray(posts) ? posts : [];
@@ -178,14 +157,7 @@ const Home = () => {
 
   const handleLike = async (postId) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const response = await axios.put(
-        `/api/posts/${postId}/like`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await likePost(postId);
 
       // Update post in state - ensure posts is array
       const currentPosts = Array.isArray(posts) ? posts : [];
@@ -206,14 +178,7 @@ const Home = () => {
 
   const handleComment = async (postId, content) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const response = await axios.post(
-        `/api/posts/${postId}/comment`,
-        { content },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await commentOnPost(postId, content);
 
       // Update post comments in state - ensure posts is array
       const currentPosts = Array.isArray(posts) ? posts : [];
@@ -229,14 +194,7 @@ const Home = () => {
 
   const handleShare = async (postId) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      await axios.put(
-        `/api/posts/${postId}/share`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await sharePost(postId);
 
       // Update shares count in state - ensure posts is array
       const currentPosts = Array.isArray(posts) ? posts : [];
@@ -252,12 +210,7 @@ const Home = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      await axios.delete(`/api/posts/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await deletePost(postId);
 
       // Remove post from state - ensure posts is array
       const currentPosts = Array.isArray(posts) ? posts : [];
