@@ -75,7 +75,9 @@ const Profile = () => {
       const response = await axios.get(`/api/posts/user/${targetUserId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setUserPosts(response.data);
+      // Ensure response.data is an array
+      const postsData = Array.isArray(response.data) ? response.data : [];
+      setUserPosts(postsData);
     } catch (error) {
       console.error('Error fetching user posts:', error);
       setUserPosts([]);
@@ -90,7 +92,11 @@ const Profile = () => {
       const response = await axios.get(`/api/users/${targetUserId}/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setUserStats(response.data);
+      setUserStats(response.data || {
+        postsCount: 0,
+        friendsCount: 0,
+        likesReceived: 0
+      });
     } catch (error) {
       console.error('Error fetching user stats:', error);
     }
@@ -102,7 +108,7 @@ const Profile = () => {
       if (!token) return;
 
       const uploadedMedia = [];
-      if (postData.media && postData.media.length > 0) {
+      if (postData.media && Array.isArray(postData.media) && postData.media.length > 0) {
         for (const mediaItem of postData.media) {
           const formData = new FormData();
           formData.append('file', mediaItem.file);
@@ -131,7 +137,9 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserPosts([response.data, ...userPosts]);
+      // Ensure userPosts is array before updating
+      const currentPosts = Array.isArray(userPosts) ? userPosts : [];
+      setUserPosts([response.data, ...currentPosts]);
       setUserStats(prev => ({
         ...prev,
         postsCount: prev.postsCount + 1
@@ -153,13 +161,15 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserPosts(userPosts.map(post => 
+      // Ensure userPosts is array before updating
+      const currentPosts = Array.isArray(userPosts) ? userPosts : [];
+      setUserPosts(currentPosts.map(post => 
         post._id === postId 
           ? { 
               ...post, 
               likes: response.data.liked 
-                ? [...post.likes, currentUser.id] 
-                : post.likes.filter(id => id !== currentUser.id)
+                ? [...(post.likes || []), currentUser.id] 
+                : (post.likes || []).filter(id => id !== currentUser.id)
             }
           : post
       ));
@@ -179,9 +189,11 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserPosts(userPosts.map(post => 
+      // Ensure userPosts is array before updating
+      const currentPosts = Array.isArray(userPosts) ? userPosts : [];
+      setUserPosts(currentPosts.map(post => 
         post._id === postId 
-          ? { ...post, comments: [...post.comments, response.data] }
+          ? { ...post, comments: [...(post.comments || []), response.data] }
           : post
       ));
     } catch (error) {
@@ -200,9 +212,11 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserPosts(userPosts.map(post => 
+      // Ensure userPosts is array before updating
+      const currentPosts = Array.isArray(userPosts) ? userPosts : [];
+      setUserPosts(currentPosts.map(post => 
         post._id === postId 
-          ? { ...post, shares: [...post.shares, currentUser.id] }
+          ? { ...post, shares: [...(post.shares || []), currentUser.id] }
           : post
       ));
     } catch (error) {
@@ -219,7 +233,9 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      setUserPosts(userPosts.filter(post => post._id !== postId));
+      // Ensure userPosts is array before updating
+      const currentPosts = Array.isArray(userPosts) ? userPosts : [];
+      setUserPosts(currentPosts.filter(post => post._id !== postId));
       setUserStats(prev => ({
         ...prev,
         postsCount: Math.max(0, prev.postsCount - 1)
@@ -250,6 +266,11 @@ const Profile = () => {
       </div>
     );
   }
+
+  // Get posts with media for photos section
+  const postsWithMedia = Array.isArray(userPosts) 
+    ? userPosts.filter(post => post.media && Array.isArray(post.media) && post.media.length > 0)
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -364,8 +385,7 @@ const Profile = () => {
                   </div>
                   
                   <div className="grid grid-cols-3 gap-2">
-                    {userPosts
-                      .filter(post => post.media && post.media.length > 0)
+                    {postsWithMedia
                       .slice(0, 6)
                       .map((post, index) => (
                         post.media.slice(0, 1).map((media, mediaIndex) => (
@@ -379,7 +399,7 @@ const Profile = () => {
                         ))
                       ))
                     }
-                    {userPosts.filter(post => post.media && post.media.length > 0).length === 0 && (
+                    {postsWithMedia.length === 0 && (
                       Array.from({length: 6}).map((_, i) => (
                         <div key={i} className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
                       ))
@@ -442,7 +462,7 @@ const Profile = () => {
                       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                       <p className="text-gray-600 dark:text-gray-400">Loading posts...</p>
                     </div>
-                  ) : userPosts.length > 0 ? (
+                  ) : Array.isArray(userPosts) && userPosts.length > 0 ? (
                     userPosts.map((post, index) => (
                       <motion.div
                         key={post._id}
@@ -553,9 +573,8 @@ const Profile = () => {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Photos</h2>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {userPosts
-                    .filter(post => post.media && post.media.length > 0)
-                    .flatMap(post => post.media)
+                  {postsWithMedia
+                    .flatMap(post => post.media || [])
                     .slice(0, 20)
                     .map((media, index) => (
                       <div key={index} className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden">
@@ -568,7 +587,7 @@ const Profile = () => {
                     ))
                   }
                   
-                  {userPosts.filter(post => post.media && post.media.length > 0).length === 0 && (
+                  {postsWithMedia.length === 0 && (
                     <div className="col-span-full text-center py-12">
                       <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Image className="w-8 h-8 text-gray-400" />
