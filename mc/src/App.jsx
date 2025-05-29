@@ -9,8 +9,7 @@ import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
 import GlobalSpinner from './components/GlobalSpinner';
 
-// Public Pages
-import Home from './pages/Home';
+// Public Pages (Only Auth-related pages remain public)
 import Login from './pages/Login';
 import AdminLogin from './pages/AdminLogin';
 import Register from './pages/Register';
@@ -18,12 +17,16 @@ import VerifyOtp from './pages/VerifyOtp';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import WaitingApproval from './pages/WaitingApproval';
+
+// Protected Pages (Now require authentication)
+import Home from './pages/Home';
+import Profile from './pages/Profile'; // New Profile Page
 import Leaderboard from './pages/Leaderboard';
 import DeveloperProfile from './pages/DeveloperProfile';
 import PublicFacultyPage from './pages/PublicFacultyPage';
 import PublicStaffPage from './pages/PublicStaffPage';
 import DocumentPage from './pages/DocumentPage';
-import About from './pages/About'; // ✅ NEWLY ADDED
+import About from './pages/About';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import HelpCenter from './pages/HelpCenter';
@@ -69,6 +72,20 @@ const Layout = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isUserRoute = location.pathname.startsWith('/user');
+  const isProfileRoute = location.pathname.startsWith('/profile');
+
+  // List of all public auth routes where Navbar and Footer should be hidden
+  const publicAuthRoutes = [
+    '/login',
+    '/admin',
+    '/register',
+    '/verify-otp',
+    '/forgot-password',
+    '/reset-password',
+    '/waiting-approval',
+  ];
+
+  const isPublicAuthRoute = publicAuthRoutes.includes(location.pathname);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,11 +98,13 @@ const Layout = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
       {isLoading && <GlobalSpinner />}
-      {!isAdminRoute && !isUserRoute && <Navbar />}
+
+      {/* Show Navbar only if NOT admin route, NOT user route, and NOT public auth route */}
+      {!isAdminRoute && !isUserRoute && !isPublicAuthRoute && <Navbar />}
+
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* Public Routes */}
-          <Route path="/" element={<RouteWrapper><Home /></RouteWrapper>} />
+          {/* Public Routes - Only Authentication Related */}
           <Route path="/login" element={<RouteWrapper><Login /></RouteWrapper>} />
           <Route path="/admin" element={<RouteWrapper><AdminLogin /></RouteWrapper>} />
           <Route path="/register" element={<RouteWrapper><Register /></RouteWrapper>} />
@@ -93,17 +112,116 @@ const Layout = () => {
           <Route path="/forgot-password" element={<RouteWrapper><ForgotPassword /></RouteWrapper>} />
           <Route path="/reset-password" element={<RouteWrapper><ResetPassword /></RouteWrapper>} />
           <Route path="/waiting-approval" element={<RouteWrapper><WaitingApproval /></RouteWrapper>} />
-          <Route path="/leaderboard" element={<RouteWrapper><Leaderboard /></RouteWrapper>} />
-          <Route path="/developers" element={<RouteWrapper><DeveloperProfile /></RouteWrapper>} />
-          <Route path="/faculty" element={<RouteWrapper><PublicFacultyPage /></RouteWrapper>} />
-          <Route path="/staff" element={<RouteWrapper><PublicStaffPage /></RouteWrapper>} />
-          <Route path="/preview" element={<RouteWrapper><DocumentPage /></RouteWrapper>} />
-          <Route path="/about" element={<RouteWrapper><About /></RouteWrapper>} /> {/* ✅ NEW ROUTE */}
-          <Route path="/privacy-policy" element={<RouteWrapper><PrivacyPolicy /></RouteWrapper>} />
-          <Route path="/terms" element={<RouteWrapper><TermsConditions /></RouteWrapper>} />
-          <Route path="/help-center" element={<RouteWrapper><HelpCenter /></RouteWrapper>} />
-          <Route path="/resources" element={<RouteWrapper><Resources /></RouteWrapper>} />
 
+          {/* Protected Public Routes - Require Authentication */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><Home /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Profile Routes - New Enhanced Profile System */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><Profile /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/:userId"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><Profile /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Other Protected Public Routes */}
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><Leaderboard /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/developers"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><DeveloperProfile /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/faculty"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><PublicFacultyPage /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><PublicStaffPage /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/preview"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><DocumentPage /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><About /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/privacy-policy"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><PrivacyPolicy /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/terms"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><TermsConditions /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/help-center"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><HelpCenter /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resources"
+            element={
+              <ProtectedRoute allowedRoles={['student', 'cr', 'faculty', 'admin']}>
+                <RouteWrapper><Resources /></RouteWrapper>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin Protected Routes */}
           <Route
@@ -148,9 +266,35 @@ const Layout = () => {
               </UserRoute>
             }
           />
+
+          {/* Catch-all route for 404 */}
+          <Route 
+            path="*" 
+            element={
+              <RouteWrapper>
+                <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                  <div className="text-center">
+                    <h1 className="text-6xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
+                    <h2 className="text-3xl font-semibold text-gray-700 dark:text-gray-300 mb-4">Page Not Found</h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-8">
+                      The page you're looking for doesn't exist or has been moved.
+                    </p>
+                    <a
+                      href="/"
+                      className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                    >
+                      Go Home
+                    </a>
+                  </div>
+                </div>
+              </RouteWrapper>
+            } 
+          />
         </Routes>
       </AnimatePresence>
-      {!isAdminRoute && !isUserRoute && <Footer />}
+
+      {/* Show Footer only if NOT admin route, NOT user route, and NOT public auth route */}
+      {!isAdminRoute && !isUserRoute && !isPublicAuthRoute && <Footer />}
     </div>
   );
 };

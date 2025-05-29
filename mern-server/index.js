@@ -15,6 +15,8 @@ const courseRoutes = require('./routes/courseRoutes');
 const materialRoutes = require('./routes/materialRoutes');
 const facultyRoutes = require('./routes/facultyRoutes'); // ✅ Added faculty route
 const staffRoutes = require("./routes/staffRoutes");
+const postsRoutes = require('./routes/postsRoutes');
+
 
 
 dotenv.config(); // Load environment variables from .env file
@@ -61,6 +63,8 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/faculty', facultyRoutes); // ✅ Faculty route added here
 app.use('/api/staff', staffRoutes);
+app.use('/api/posts', postsRoutes);
+
 
 // Media upload route
 app.post("/api/media/upload", upload.single("file"), (req, res) => {
